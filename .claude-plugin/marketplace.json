@@ -1,0 +1,26 @@
+{
+  "name": "chrome-extension-builder-marketplace",
+  "displayName": "Chrome Extension Builder",
+  "description": "A single-plugin marketplace that ships the Chrome Extension Builder plugin. Install with: /plugin marketplace add <owner>/chrome-extension-builder && /plugin install chrome-extension-builder@chrome-extension-builder-marketplace",
+  "owner": {
+    "name": "Chrome Extension Builder Contributors",
+    "url": "https://github.com/harry-harish/chrome-extension-builder"
+  },
+  "plugins": [
+    {
+      "name": "chrome-extension-builder",
+      "source": ".",
+      "description": "End-to-end agent for building production-ready Chrome (Manifest V3) extensions with WXT, Plasmo, or CRXJS.",
+      "version": "1.0.0",
+      "category": "development",
+      "tags": [
+        "chrome-extension",
+        "browser-extension",
+        "manifest-v3",
+        "scaffolding",
+        "wxt",
+        "plasmo"
+      ]
+    }
+  ]
+}

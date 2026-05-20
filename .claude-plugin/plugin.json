@@ -1,0 +1,62 @@
+{
+  "name": "chrome-extension-builder",
+  "displayName": "Chrome Extension Builder",
+  "version": "1.0.0",
+  "description": "End-to-end agent for building production-ready Chrome (Manifest V3) extensions with WXT, Plasmo, or CRXJS. Scaffolds, validates, builds, and tests. Bundles security patterns from MetaMask and Bitwarden, architecture patterns from Refined GitHub, Dark Reader, and uBlock Origin Lite, plus Chrome Web Store submission prep. Use when the user wants to create, scaffold, refactor, audit, migrate, or publish a Chrome, Edge, Firefox, or cross-browser extension.",
+  "author": {
+    "name": "Chrome Extension Builder Contributors",
+    "url": "https://github.com/harry-harish/chrome-extension-builder"
+  },
+  "homepage": "https://github.com/harry-harish/chrome-extension-builder",
+  "repository": "https://github.com/harry-harish/chrome-extension-builder",
+  "license": "Apache-2.0",
+  "keywords": [
+    "chrome-extension",
+    "browser-extension",
+    "manifest-v3",
+    "mv3",
+    "wxt",
+    "plasmo",
+    "crxjs",
+    "firefox-extension",
+    "edge-extension",
+    "web-store",
+    "scaffolding",
+    "claude-code-plugin"
+  ],
+  "userConfig": {
+    "default_framework": {
+      "type": "string",
+      "title": "Default framework",
+      "description": "Default framework to scaffold with. WXT is recommended for 2026 (active maintenance, MV3-only, multi-browser, smallest bundle).",
+      "enum": ["wxt", "plasmo", "crxjs", "vanilla"],
+      "default": "wxt"
+    },
+    "target_browsers": {
+      "type": "string",
+      "title": "Target browsers",
+      "description": "Comma-separated list of target browsers (chrome, edge, firefox, safari). WXT supports all four; Plasmo and CRXJS are Chromium-first.",
+      "default": "chrome,edge,firefox"
+    },
+    "default_ui_framework": {
+      "type": "string",
+      "title": "UI framework",
+      "description": "Frontend framework for popup/options/side-panel UIs.",
+      "enum": ["react", "vue", "svelte", "solid", "vanilla"],
+      "default": "react"
+    },
+    "typescript": {
+      "type": "boolean",
+      "title": "Use TypeScript",
+      "description": "Scaffold with TypeScript (strongly recommended; every reference extension in 2026 uses TS).",
+      "default": true
+    },
+    "package_manager": {
+      "type": "string",
+      "title": "Package manager",
+      "description": "Package manager for installing dependencies.",
+      "enum": ["pnpm", "npm", "yarn", "bun"],
+      "default": "pnpm"
+    }
+  }
+}

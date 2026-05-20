@@ -1,0 +1,14 @@
+{
+  "extension_name": {
+    "message": "My Extension",
+    "description": "Name shown in toolbar tooltip and Chrome Web Store listing"
+  },
+  "extension_description": {
+    "message": "A starter Manifest V3 extension.",
+    "description": "Short description (max 132 chars for the Chrome Web Store)"
+  },
+  "action_title": {
+    "message": "Open My Extension",
+    "description": "Tooltip on the toolbar icon"
+  }
+}

@@ -2,7 +2,7 @@
   "name": "chrome-extension-builder",
   "displayName": "Chrome Extension Builder",
   "version": "1.0.0",
-  "description": "End-to-end agent for building production-ready Chrome (Manifest V3) extensions with WXT, Plasmo, or CRXJS. Scaffolds, validates, builds, and tests. Bundles security patterns from MetaMask and Bitwarden, architecture patterns from Refined GitHub, Dark Reader, and uBlock Origin Lite, plus Chrome Web Store submission prep. Use when the user wants to create, scaffold, refactor, audit, migrate, or publish a Chrome, Edge, Firefox, or cross-browser extension.",
+  "description": "Use when scaffolding, validating, testing, or publishing a Manifest V3 Chrome/Edge/Firefox extension. Builds end-to-end with WXT, Plasmo, or CRXJS — service-worker dispatcher, typed message passing, strict CSP, `_locales/` i18n, Playwright smoke harness, Chrome Web Store submission prep. Ships reference patterns from MetaMask, Bitwarden, Refined GitHub, Dark Reader, uBlock Origin Lite, Violentmonkey, SponsorBlock, and Stylus.",
   "author": {
     "name": "Chrome Extension Builder Contributors",
     "url": "https://github.com/harry-harish/chrome-extension-builder"

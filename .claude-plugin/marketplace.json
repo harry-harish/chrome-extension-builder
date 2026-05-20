@@ -9,7 +9,7 @@
       "name": "chrome-extension-builder",
       "displayName": "Chrome Extension Builder",
       "source": "./",
-      "description": "End-to-end agent for building production-ready Chrome (Manifest V3) extensions with WXT, Plasmo, or CRXJS.",
+      "description": "Use when scaffolding, validating, testing, or publishing a Manifest V3 Chrome/Edge/Firefox extension. Builds end-to-end with WXT, Plasmo, or CRXJS.",
       "version": "1.0.0",
       "homepage": "https://github.com/harry-harish/chrome-extension-builder",
       "repository": "https://github.com/harry-harish/chrome-extension-builder",

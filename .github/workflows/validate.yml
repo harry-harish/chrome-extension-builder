@@ -1,0 +1,63 @@
+name: validate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  plugin-validate:
+    name: claude plugin validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Claude Code CLI
+        run: npm install -g @anthropic-ai/claude-code
+
+      - name: claude plugin validate .
+        run: claude plugin validate .
+
+  validators:
+    name: Local validator scripts
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Smoke-test the validators against the vanilla template
+        shell: bash
+        run: |
+          set -euo pipefail
+          TEMPLATE_DIR=skills/extension-architect/templates/vanilla
+          export WORK="$(mktemp -d)"
+          cp -r "$TEMPLATE_DIR" "$WORK/dummy"
+          mkdir -p "$WORK/dummy/icons"
+          # Generate 1x1 placeholder PNGs so file-existence + icon checks pass
+          python3 - <<'PY'
+          import base64, os, pathlib
+          PNG = base64.b64decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=')
+          for s in (16, 32, 48, 128):
+              (pathlib.Path(os.environ['WORK']) / 'dummy' / 'icons' / f'{s}.png').write_bytes(PNG)
+          PY
+          python3 skills/extension-architect/scripts/validate-manifest.py "$WORK/dummy/manifest.json"
+          bash    skills/extension-security/scripts/validate-csp.sh        "$WORK/dummy/manifest.json"
+          python3 skills/extension-security/scripts/validate-permissions.py "$WORK/dummy/manifest.json"
+          bash    skills/extension-publishing/scripts/check-store-readiness.sh "$WORK/dummy"
+          bash    skills/extension-i18n/references/check-i18n.sh           "$WORK/dummy"
+
+  shell-syntax:
+    name: shellcheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: shellcheck
+        run: |
+          # ShellCheck is preinstalled on ubuntu-latest. Audit every bundled .sh.
+          find . -name "*.sh" -not -path "./node_modules/*" -print0 \
+            | xargs -0 shellcheck --severity=warning

@@ -7,6 +7,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-05-21
+
+### Changed
+
+- **License** flipped from Apache-2.0 to MIT to match the dominant
+  convention in the npm/TypeScript extension ecosystem and to align with
+  the MIT license already promised for generated scaffolds.
+- **README** rewritten for sharper positioning. Install + first-run
+  command now appear above the feature inventory. Added `Non-goals` and
+  `Known rough edges` sections. No exaggerated claims.
+- **Plugin description** rewritten across `plugin.json`,
+  `marketplace.json`, and the GitHub repo description so all four
+  surfaces use the same canonical short/long copy.
+- **GitHub topics** added: `claude-code`, `claude-plugin`,
+  `chrome-extension`, `manifest-v3`, `browser-extension`, `wxt`,
+  `plasmo`, `crxjs`, `typescript`, `webstore`.
+
+### Added
+
+- `CONTRIBUTING.md` — short and strict; defines scope and required pre-PR
+  checks.
+- `SECURITY.md` — private-disclosure channels and clear in/out-of-scope
+  list.
+- `demo/` directory with a recording script for the 20-second install +
+  scaffold + validate GIF that the README references.
+
 ## [1.0.0] - 2026-05-20
 
 ### Added

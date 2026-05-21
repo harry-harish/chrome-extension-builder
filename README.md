@@ -1,133 +1,144 @@
 # Chrome Extension Builder
 
-End-to-end Claude Code plugin for building production-ready Chrome (Manifest V3) extensions. Scaffolds, validates, builds, tests, and prepares for Chrome Web Store submission — all in one install.
+A Claude Code plugin for building and shipping Manifest V3 Chrome extensions without tripping over the usual stuff: manifest quirks, permission sprawl, CSP mistakes, broken builds, and Web Store submission prep.
 
-## What you get
+It scaffolds new extensions, audits existing ones, adds common extension surfaces, runs validation, and prepares release artifacts. It works with WXT, Plasmo, CRXJS, and vanilla setups, with WXT as the default path.
 
-- **`/chrome-ext:new`** — 8-phase guided workflow that takes you from idea to a buildable, tested MV3 extension.
-- **`/chrome-ext:validate`** — Run all validators on the current directory (manifest, CSP, permissions, web-ext lint).
-- **`/chrome-ext:add-feature`** — Add a popup, options page, content script, side panel, devtools panel, or background handler to an existing extension.
-- **`/chrome-ext:publish`** — Prepare Chrome Web Store submission (screenshots spec, privacy disclosures, single-purpose statement, Limited Use disclosure, zip the build).
-- **`/chrome-ext:migrate-mv2`** — Audit an MV2 codebase and produce an MV3 migration plan.
-
-Three specialist agents the orchestrator dispatches:
-- **`extension-architect`** — Discovery and architecture decisions.
-- **`manifest-auditor`** — Read-only auditor that lints `manifest.json`, flags overbroad permissions, rejects MV2, checks CSP.
-- **`extension-test-runner`** — Isolated agent that runs the build, `web-ext lint`, and Playwright smoke tests.
-
-Eight progressively-disclosed skills:
-- `extension-architect` — Manifest V3 patterns, service worker lifecycle, MV2→MV3 migration.
-- `wxt-framework` — WXT setup, config, build, deploy (default — 2026 recommendation).
-- `plasmo-framework` — Plasmo setup (use with caution; maintenance mode per WXT comparison).
-- `crxjs-vite` — CRXJS + Vite for existing Vite apps.
-- `extension-security` — LavaMoat, CSP, content-script isolation, key storage patterns (MetaMask, Bitwarden).
-- `extension-testing` — Playwright persistent-context harness, Vitest, web-ext lint.
-- `extension-i18n` — `_locales/messages.json` patterns; Crowdin/Weblate integration.
-- `extension-publishing` — Chrome Web Store policy, screenshots, listing, OAuth submission via `chrome-webstore-upload-cli`.
-
-A **`PostToolUse` hook** auto-runs `validate-manifest.py`, `validate-csp.sh`, and `validate-permissions.py` whenever the model writes to a `manifest.json`. The hook exits with code 2 if any validator reports critical issues — the write is applied (Claude Code hooks run *after* the tool), but the agent sees the failure surfaced in stderr and is prompted to fix before continuing. A `PreToolUse` hook also blocks Bash commands containing `--auto-publish` unless prefixed with `CONFIRM_PUBLISH_LIVE=1`, so a stray Web Store publish can't be issued mid-session.
+![Demo GIF](./demo/chrome-extension-builder-demo.gif)
 
 ## Install
 
+Inside Claude Code:
+
 ```bash
-# Inside Claude Code
 /plugin marketplace add harry-harish/chrome-extension-builder
 /plugin install chrome-extension-builder@chrome-extension-builder-marketplace
 ```
 
-Or, for local development:
+For local development:
 
 ```bash
 git clone https://github.com/harry-harish/chrome-extension-builder
 claude --plugin-dir ./chrome-extension-builder
 ```
 
-## Requirements at runtime
+## Start here
 
-- **Node.js ≥ 18** (`node -v`)
-- **pnpm** (recommended) / npm / yarn / bun
-- **Python 3.10+** (for validator scripts)
-- **Chromium via Playwright** for E2E tests: `npx playwright install chromium`
-- **Optional**: `git`, `gh`, Chrome Web Store API OAuth credentials (`CLIENT_ID`, `CLIENT_SECRET`, `REFRESH_TOKEN`, `EXTENSION_ID`) for publishing.
-
-`/chrome-ext:new` checks for all of these in Phase 1 and surfaces a doctor report.
-
-## Quickstart
-
-```
-> /chrome-ext:new
+```bash
+/chrome-ext:new
 ```
 
-That command launches the 8-phase workflow:
+That launches a guided workflow for planning, scaffolding, validating, testing, and preparing an MV3 extension for release.
 
-1. **Discovery** — purpose, target browsers, framework preference.
-2. **Reference analysis** — which best-practice patterns apply.
-3. **Architecture decision** — framework choice (wait-for-user gate).
-4. **Scaffold** — runs `pnpm dlx wxt init` (or Plasmo / CRXJS / vanilla).
-5. **Implement** — generates entrypoints (background SW, content scripts, popup, options) with security patterns from MetaMask/Bitwarden.
-6. **Validate** — `manifest-auditor` runs `validate-manifest.py`, `validate-permissions.py`, `web-ext lint` (wait-for-user gate).
-7. **Test** — `extension-test-runner` runs the build and Playwright smoke tests.
-8. **Docs + publishing prep** — generates README, CHANGELOG, store listing draft.
+## Why this exists
 
-## Defaults locked in
+Building the feature is usually not the hardest part of extension work.
 
-- **Manifest V3 only.** MV2 was removed from Chrome 139 on 2025-07-24. The auditor rejects any `manifest_version: 2`.
-- **WXT 0.20+** as the default framework (active maintenance, 400 KB typical bundle vs Plasmo's 800 KB).
-- **TypeScript everywhere** (every reference extension in 2026 uses TS).
-- **`chrome.activeTab` preferred** over broad `host_permissions`. Auditor flags `<all_urls>` for manual review.
-- **No remote code, no `eval`, strict CSP.** Auditor blocks `unsafe-inline` and `unsafe-eval`.
-- **Reproducible builds** — bundle commit SHA into version string; commit `pnpm-lock.yaml`.
-- **`_locales/`-based i18n** is generated by default.
+The time sink is everything around it: choosing the right framework, structuring background and content logic correctly, keeping permissions tight, satisfying MV3 rules, getting tests to pass, and cleaning things up for Chrome Web Store review. This plugin is built to handle that layer well.
 
-## What the auditor reports
+## Commands
 
-The auditor classifies issues as **critical** (blocks Chrome Web Store submission; exit code ≥ 1), **warning** (deviates from a best practice but doesn't block submission), or **info** (improvement opportunity).
+- `/chrome-ext:new` — Start a new extension with a guided multi-phase workflow.
+- `/chrome-ext:validate` — Run manifest, CSP, permission, and lint checks on the current project.
+- `/chrome-ext:add-feature` — Add a popup, options page, content script, side panel, devtools panel, or background handler.
+- `/chrome-ext:publish` — Prepare store assets, disclosure text, and packaged output for submission.
+- `/chrome-ext:migrate-mv2` — Audit an MV2 codebase and generate an MV3 migration plan.
 
-**Critical** (rejected):
-- `manifest_version: 2` — Chrome 139 removed MV2 on 2025-07-24.
-- Persistent background pages (`background.persistent: true`).
-- MV2 fields like `browser_action`, `background.scripts`.
-- `unsafe-inline` or `unsafe-eval` in `content_security_policy.extension_pages`.
-- Remote sources (`http(s)://…`) in `content_security_policy.extension_pages`.
-- `content_security_policy` as a string (MV3 requires the object form).
-- `web_accessible_resources` in MV2 string-array form.
-- `webRequestBlocking` permission (removed in MV3).
-- Referenced files (icons, popup HTML, content scripts) missing on disk.
-- `name` > 45 chars or `description` > 132 chars.
+## Specialist agents
 
-**Warning** (flagged for manual review):
-- `host_permissions: ["<all_urls>"]` — flagged as a Chrome Web Store manual-review trigger; not rejected.
-- Stringly-typed `chrome.runtime.sendMessage` patterns (anti-pattern; the architect skill teaches the typed `sendCmd` replacement, but a static linter can't be sure).
-- `chrome.tabs.executeScript` / `chrome.tabs.insertCSS` calls in source (you should call `chrome.scripting` instead).
-- Missing icon sizes (16/32/48/128).
-- `_locales/{default_locale}/messages.json` missing when `default_locale` is set.
+- `extension-architect` — Chooses structure, capabilities, and framework direction.
+- `manifest-auditor` — Reviews `manifest.json`, flags risky permissions, checks CSP, and rejects MV2-only patterns.
+- `extension-test-runner` — Runs build, lint, and smoke-test workflows in isolation.
 
-## Reference patterns shipped
+## Safety rails
 
-The `skills/extension-architect/examples/` and `skills/extension-security/examples/` directories distill patterns from these production extensions:
+- A `PostToolUse` hook re-checks `manifest.json` changes with manifest, CSP, and permission validators. If a critical issue appears, the session is pushed to fix it before moving on.
+- A `PreToolUse` hook blocks live publish commands unless they are explicitly confirmed.
+- The plugin defaults to Manifest V3 only.
 
-| Extension | Pattern |
-|---|---|
-| Refined GitHub | Feature-module architecture; lazy URL-based init |
-| Dark Reader | Pure-TS, no-framework build; reproducible signatures |
-| Bitwarden Clients | Monorepo with shared `libs/` for security-critical code |
-| MetaMask | LavaMoat sandboxing; controller-based state |
-| uBlock Origin Lite | Optional/tiered permissions; declarativeNetRequest |
-| Violentmonkey | Explicit four-execution-context architecture |
-| SponsorBlock | Background SW as dispatcher; CORS off the content script |
-| Stylus | Tiny content-script footprint; bundled CodeMirror |
+## Framework support
+
+- WXT — default recommendation
+- Plasmo — supported
+- CRXJS — supported
+- Vanilla MV3 — supported
+
+Use the one that matches your project. The plugin should help you move faster, not force a rewrite for style points.
+
+## Runtime requirements
+
+- Node.js 18+
+- pnpm, npm, yarn, or bun
+- Python 3.10+ for validator scripts
+- Playwright Chromium for E2E tests
+- Optional GitHub and Chrome Web Store credentials for publishing flows
+
+## Defaults
+
+- Manifest V3 only
+- TypeScript-first output
+- `chrome.activeTab` preferred over broad host permissions
+- Strict CSP, no remote code, no `eval`
+- Reproducible builds
+- `_locales`-based i18n by default
+
+## What it checks
+
+The validator path looks for problems that routinely waste time during extension development and review:
+
+- Invalid MV3 manifest fields
+- Overbroad or suspicious permissions
+- CSP issues like `unsafe-inline` and `unsafe-eval`
+- Missing referenced files
+- Old MV2 patterns that should not ship
+- Packaging and lint problems that break release flow
+
+## Non-goals
+
+This plugin does not:
+
+- Guarantee Chrome Web Store approval
+- Publish live by accident
+- Make unsafe permissions acceptable
+- Turn a weak product idea into a good extension
+- Replace framework docs for WXT, Plasmo, or CRXJS
+
+## Known rough edges
+
+- Firefox and Edge workflows are not the primary target yet.
+- Existing repos with unusual layouts may need cleanup before automation works well.
+- Store submission details can change faster than tooling does.
+- Some UI and product decisions still need a human with taste.
+
+## A good fit
+
+This plugin is useful if you are:
+
+- Starting a new MV3 extension
+- Migrating older extension code
+- Adding features to an existing extension without breaking structure
+- Preparing for Web Store submission and want stricter checks before upload
+
+## Repository structure
+
+```text
+.claude-plugin/
+agents/
+commands/
+hooks/
+skills/
+README.md
+CHANGELOG.md
+LICENSE
+PRIVACY.md
+```
+
+## Validate before release
+
+```bash
+/chrome-ext:validate
+```
 
 ## License
 
-- Plugin: Apache-2.0
-- Generated scaffolds: MIT (configurable per project)
-
-## Caveats
-
-- The Chrome Web Store review process is human-mediated; this plugin can prepare submissions but cannot guarantee approval.
-- `web-ext lint` is Mozilla-maintained and runs against any MV3 `manifest.json`; for browser-side QA prefer Playwright's persistent-context flow.
-- Mobile Claude.ai does not load custom skills as of mid-2026 — use Claude Code or desktop Claude.ai.
-
-## Contributing
-
-PRs welcome. The most valuable contributions are new reference patterns in `skills/extension-architect/examples/` and `skills/extension-security/examples/`.
+MIT

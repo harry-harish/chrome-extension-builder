@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.1] - 2026-05-21
+
+### Fixed
+
+- **Plugin install broke at the runtime validator.** `userConfig` field
+  entries had `enum: [...]` keys to constrain `default_framework`,
+  `default_ui_framework`, and `package_manager` to a known set. `claude
+  plugin validate` accepted this, but the in-app installer rejects it
+  with `Unrecognized key: "enum"`. The schema only supports `type`,
+  `title`, `description`, `default`, `sensitive`, `required`,
+  `multiple`, `min`, `max`. Dropped the `enum` keys; moved the allowed-
+  values list into each field's `description`. The orchestrator already
+  validates the value at runtime, so behavior is unchanged for users
+  who pick a valid value, and an unrecognized value now produces a
+  clearer prompt than a silent failure.
+
 ## [1.1.0] - 2026-05-21
 
 ### Changed

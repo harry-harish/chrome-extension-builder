@@ -1,7 +1,7 @@
 {
   "name": "chrome-extension-builder",
   "displayName": "Chrome Extension Builder",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Chrome Extension Builder is a Claude Code plugin for developers working on Manifest V3 browser extensions. It scaffolds new extensions, audits existing ones, adds popups and content scripts, validates manifests and permissions, runs testing flows, and prepares release artifacts for Chrome Web Store submission. It supports WXT, Plasmo, CRXJS, and vanilla MV3 workflows while keeping the default path opinionated and safe.",
   "author": {
     "name": "harry-harish",
@@ -26,8 +26,7 @@
     "default_framework": {
       "type": "string",
       "title": "Default framework",
-      "description": "Default framework to scaffold with. WXT is recommended for 2026 (active maintenance, MV3-only, multi-browser, smallest bundle).",
-      "enum": ["wxt", "plasmo", "crxjs", "vanilla"],
+      "description": "One of: wxt, plasmo, crxjs, vanilla. WXT is recommended for 2026 (active maintenance, MV3-only, multi-browser, smallest bundle). The /chrome-ext:new orchestrator validates this value and prompts if it is unrecognized.",
       "default": "wxt"
     },
     "target_browsers": {
@@ -39,8 +38,7 @@
     "default_ui_framework": {
       "type": "string",
       "title": "UI framework",
-      "description": "Frontend framework for popup/options/side-panel UIs.",
-      "enum": ["react", "vue", "svelte", "solid", "vanilla"],
+      "description": "Frontend framework for popup/options/side-panel UIs. One of: react, vue, svelte, solid, vanilla. Resolves to the matching WXT template (e.g. react -> react-ts when TypeScript is enabled).",
       "default": "react"
     },
     "typescript": {
@@ -52,8 +50,7 @@
     "package_manager": {
       "type": "string",
       "title": "Package manager",
-      "description": "Package manager for installing dependencies.",
-      "enum": ["pnpm", "npm", "yarn", "bun"],
+      "description": "Package manager for installing dependencies. One of: pnpm, npm, yarn, bun. The orchestrator falls back to whichever is detected on PATH if the configured value is unavailable.",
       "default": "pnpm"
     }
   }

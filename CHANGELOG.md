@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-05-21
+
+### Added
+
+- **Real demo GIF** at `demo/chrome-extension-builder-demo.gif` (20.7s,
+  960×540, 4.0 MB). Captures an actual `/chrome-ext:new` session in
+  Claude Code from the framework-decision table through to
+  `/chrome-ext:validate` clean output. Replaces the broken README link
+  that 404'd in v1.1.x.
+
 ## [1.1.1] - 2026-05-21
 
 ### Fixed

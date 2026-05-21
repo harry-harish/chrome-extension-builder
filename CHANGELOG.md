@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.1] - 2026-05-21
+
+### Changed
+
+- **Demo GIF replaced.** The v1.2.0 demo accidentally captured the
+  author's Claude API account organization name in the Claude Code
+  status bar. The new GIF was re-recorded from a trimmed clip with
+  that frame range removed and was manually verified clean. Same
+  20.7s / 960×540 / ~3.8 MB encoding profile.
+
+### Note
+
+- The v1.2.0 demo asset is still reachable via the GitHub blob CDN by
+  direct commit SHA for the standard ~30-day object-retention window
+  before GitHub's GC runs. Anyone with `4354549` or `v1.2.0` can still
+  fetch it. The leaked content was an organization-name identifier
+  only; no credentials or business-sensitive data were involved.
+
 ## [1.2.0] - 2026-05-21
 
 ### Added

@@ -10,7 +10,7 @@
       "displayName": "Chrome Extension Builder",
       "source": "./",
       "description": "Claude Code plugin for building, validating, testing, and shipping Manifest V3 Chrome extensions.",
-      "version": "1.2.0",
+      "version": "1.2.1",
       "homepage": "https://github.com/harry-harish/chrome-extension-builder",
       "repository": "https://github.com/harry-harish/chrome-extension-builder",
       "license": "MIT",

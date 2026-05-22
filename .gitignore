@@ -15,3 +15,7 @@ coverage/
 *.zip
 playwright-report/
 test-results/
+
+# Local-only launch playbook (paste-ready post content). Lives with the
+# project but is not part of the published plugin.
+LAUNCH.md

@@ -7,6 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.2] - 2026-05-22
+
+### Fixed
+
+- **Hook load failed at runtime** with
+  `Invalid input: expected record, received undefined` at path `hooks`.
+  The runtime expects `hooks/hooks.json` to wrap the event arrays in an
+  outer `"hooks"` key:
+
+      { "hooks": { "PostToolUse": [...], "PreToolUse": [...], ... } }
+
+  Our file had `PostToolUse`/`PreToolUse`/`UserPromptSubmit` at the top
+  level (matching the format that `~/.claude/settings.json` accepts and
+  that older plugin docs showed). The plugin loader rejected it. Wrapped
+  the existing arrays under `hooks:` — every individual hook command,
+  matcher, and timeout is byte-identical to v1.2.1; only the outer
+  structure changed.
+
+  Same class of bug as v1.1.1's `userConfig.enum` rejection: `claude
+  plugin validate` accepted the bad schema, but the runtime did not.
+
 ## [1.2.1] - 2026-05-21
 
 ### Changed

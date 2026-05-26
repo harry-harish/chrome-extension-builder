@@ -1,37 +1,39 @@
 {
-  "PostToolUse": [
-    {
-      "matcher": "Write|Edit|MultiEdit",
-      "hooks": [
-        {
-          "type": "command",
-          "command": "INPUT=$(cat); FILE=$(printf '%s' \"$INPUT\" | python3 -c \"import json,sys; d=json.load(sys.stdin); print(d.get('tool_input',{}).get('file_path',''))\"); RC=0; case \"$FILE\" in *manifest.json) python3 \"${CLAUDE_PLUGIN_ROOT}/skills/extension-architect/scripts/validate-manifest.py\" \"$FILE\" 1>&2 || RC=$?; bash \"${CLAUDE_PLUGIN_ROOT}/skills/extension-security/scripts/validate-csp.sh\" \"$FILE\" 1>&2 || RC=$?; python3 \"${CLAUDE_PLUGIN_ROOT}/skills/extension-security/scripts/validate-permissions.py\" \"$FILE\" 1>&2 || RC=$?;; esac; case \"$FILE\" in *.env|*.env.*|*credentials.json|*secrets.json) echo 'WARNING: writing to a credentials file. Make sure this is intentional and the file is gitignored.' 1>&2 ;; esac; if [ \"$RC\" -ne 0 ]; then echo \"manifest validators reported critical issues (rc=$RC). The write was applied; fix before continuing.\" 1>&2; exit 2; fi; exit 0",
-          "timeout": 30
-        }
-      ]
-    }
-  ],
-  "PreToolUse": [
-    {
-      "matcher": "Bash",
-      "hooks": [
-        {
-          "type": "command",
-          "command": "INPUT=$(cat); CMD=$(printf '%s' \"$INPUT\" | python3 -c \"import json,sys; d=json.load(sys.stdin); print(d.get('tool_input',{}).get('command',''))\"); if echo \"$CMD\" | grep -qE 'chrome-webstore-upload(-cli)?[^|;&]*--auto-publish' && ! echo \"$CMD\" | grep -q 'CONFIRM_PUBLISH_LIVE=1'; then echo 'BLOCKED: --auto-publish would push the upload LIVE to the Chrome Web Store, bypassing manual review. Re-run via /chrome-ext:publish (uploads as draft by default), or prefix the command with CONFIRM_PUBLISH_LIVE=1 if you intend to publish live.' 1>&2; exit 2; fi; exit 0",
-          "timeout": 5
-        }
-      ]
-    }
-  ],
-  "UserPromptSubmit": [
-    {
-      "hooks": [
-        {
-          "type": "command",
-          "command": "INPUT=$(cat); PROMPT=$(echo \"$INPUT\" | python3 -c \"import json,sys; d=json.load(sys.stdin); print(d.get('prompt',''))\"); if echo \"$PROMPT\" | grep -qiE 'manifest.*v2|mv2|browser_action|background.*persistent'; then echo 'context: Manifest V2 was removed from Chrome 139 (2025-07-24). If you are starting fresh, target MV3. If you are migrating an MV2 codebase, run /chrome-ext:migrate-mv2 to get a structured migration plan.' 1>&2; fi; exit 0",
-          "timeout": 5
-        }
-      ]
-    }
-  ]
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "INPUT=$(cat); FILE=$(printf '%s' \"$INPUT\" | python3 -c \"import json,sys; d=json.load(sys.stdin); print(d.get('tool_input',{}).get('file_path',''))\"); RC=0; case \"$FILE\" in *manifest.json) python3 \"${CLAUDE_PLUGIN_ROOT}/skills/extension-architect/scripts/validate-manifest.py\" \"$FILE\" 1>&2 || RC=$?; bash \"${CLAUDE_PLUGIN_ROOT}/skills/extension-security/scripts/validate-csp.sh\" \"$FILE\" 1>&2 || RC=$?; python3 \"${CLAUDE_PLUGIN_ROOT}/skills/extension-security/scripts/validate-permissions.py\" \"$FILE\" 1>&2 || RC=$?;; esac; case \"$FILE\" in *.env|*.env.*|*credentials.json|*secrets.json) echo 'WARNING: writing to a credentials file. Make sure this is intentional and the file is gitignored.' 1>&2 ;; esac; if [ \"$RC\" -ne 0 ]; then echo \"manifest validators reported critical issues (rc=$RC). The write was applied; fix before continuing.\" 1>&2; exit 2; fi; exit 0",
+            "timeout": 30
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "INPUT=$(cat); CMD=$(printf '%s' \"$INPUT\" | python3 -c \"import json,sys; d=json.load(sys.stdin); print(d.get('tool_input',{}).get('command',''))\"); if echo \"$CMD\" | grep -qE 'chrome-webstore-upload(-cli)?[^|;&]*--auto-publish' && ! echo \"$CMD\" | grep -q 'CONFIRM_PUBLISH_LIVE=1'; then echo 'BLOCKED: --auto-publish would push the upload LIVE to the Chrome Web Store, bypassing manual review. Re-run via /chrome-ext:publish (uploads as draft by default), or prefix the command with CONFIRM_PUBLISH_LIVE=1 if you intend to publish live.' 1>&2; exit 2; fi; exit 0",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "INPUT=$(cat); PROMPT=$(echo \"$INPUT\" | python3 -c \"import json,sys; d=json.load(sys.stdin); print(d.get('prompt',''))\"); if echo \"$PROMPT\" | grep -qiE 'manifest.*v2|mv2|browser_action|background.*persistent'; then echo 'context: Manifest V2 was removed from Chrome 139 (2025-07-24). If you are starting fresh, target MV3. If you are migrating an MV2 codebase, run /chrome-ext:migrate-mv2 to get a structured migration plan.' 1>&2; fi; exit 0",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
 }

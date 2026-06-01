@@ -51,6 +51,45 @@ jobs:
           bash    skills/extension-publishing/scripts/check-store-readiness.sh "$WORK/dummy"
           bash    skills/extension-i18n/references/check-i18n.sh           "$WORK/dummy"
 
+  plugin-install:
+    name: claude plugin install (runtime truth)
+    runs-on: ubuntu-latest
+    # `claude plugin validate` checks a small subset of the schemas the runtime
+    # loader actually enforces (see anthropics/claude-code#60725). Running the
+    # real install catches the manifest-rejection failures `validate` misses —
+    # e.g. `userConfig.*.enum` and `hooks/hooks.json` without the outer
+    # `hooks` wrapper, both of which slipped past validate on this plugin
+    # before they were caught by users at install time.
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Claude Code CLI
+        run: npm install -g @anthropic-ai/claude-code
+
+      - name: Add workspace as a local marketplace
+        run: |
+          set -e
+          claude plugin marketplace add "$GITHUB_WORKSPACE"
+
+      - name: Install plugin and assert success
+        shell: bash
+        run: |
+          set -e
+          OUT=$(claude plugin install \
+            chrome-extension-builder@chrome-extension-builder-marketplace \
+            --scope local 2>&1)
+          echo "$OUT"
+          # `claude plugin install` exits 0 even on manifest-rejection; check
+          # the output explicitly. Anchor on both possible failure markers.
+          if echo "$OUT" | grep -qE "Failed to install|invalid manifest|Unrecognized key"; then
+            echo "::error::claude plugin install reported a failure"
+            exit 1
+          fi
+          if ! echo "$OUT" | grep -q "Successfully installed"; then
+            echo "::error::no 'Successfully installed' marker in output"
+            exit 1
+          fi
+
   shell-syntax:
     name: shellcheck
     runs-on: ubuntu-latest

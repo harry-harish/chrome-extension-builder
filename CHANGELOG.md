@@ -7,6 +7,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.3] - 2026-06-01
+
+### Changed
+
+- **Removed the `version` field from the plugin entry in
+  `marketplace.json`.** Per [affaan-m/everything-claude-code#37][1] and
+  the empirical pattern in the official catalog (190 of 204 plugins in
+  `anthropics/claude-plugins-official` omit this field), a `version`
+  field on the plugin entry blocks Claude Code's auto-update detection
+  and the upstream SHA-bump CI for `claude-plugins-community`. The
+  plugin's own `.claude-plugin/plugin.json` retains its `version` —
+  only the marketplace-level duplicate was removed.
+
+  Motivation: our community-marketplace pin has been stuck at the
+  initial v1.0.0 commit since approval (2026-05-20). Removing this
+  field is the most likely fix to unblock automatic bumps going
+  forward. It does not retroactively update the existing pin — that
+  still needs an Anthropic-side intervention — but it removes one
+  known blocker on our side.
+
+  [1]: https://github.com/affaan-m/everything-claude-code/issues/37
+
 ## [1.2.2] - 2026-05-22
 
 ### Fixed

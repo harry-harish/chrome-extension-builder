@@ -1,0 +1,82 @@
+name: Bug report
+description: Something broke — a command failed, a validator was wrong, a scaffold produced bad output.
+title: "[bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the report. The checkboxes below take 20 seconds and replace
+        the telemetry this plugin deliberately doesn't have — they're how we
+        learn which paths people actually use.
+
+  - type: checkboxes
+    id: framework
+    attributes:
+      label: Framework
+      description: Which framework target(s) were you using?
+      options:
+        - label: WXT
+        - label: Plasmo
+        - label: CRXJS
+        - label: Vanilla MV3
+        - label: Not framework-related
+
+  - type: checkboxes
+    id: command
+    attributes:
+      label: Command / surface
+      description: Where did the bug show up?
+      options:
+        - label: "/chrome-ext:new"
+        - label: "/chrome-ext:validate"
+        - label: "/chrome-ext:add-feature"
+        - label: "/chrome-ext:publish"
+        - label: "/chrome-ext:migrate-mv2"
+        - label: A validator script directly (validate-manifest.py etc.)
+        - label: A hook (PostToolUse / PreToolUse)
+        - label: Install / marketplace
+        - label: Other
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What did you run, what did you expect, what did you get instead?
+      placeholder: |
+        1. Ran /chrome-ext:validate on a WXT project
+        2. Expected the build manifest to be found at .output/chrome-mv3/
+        3. Got "no manifest.json found" even though the build exists
+    validations:
+      required: true
+
+  - type: textarea
+    id: output
+    attributes:
+      label: Error output
+      description: Paste exact stderr / validator output. Auto-formatted as code.
+      render: shell
+
+  - type: input
+    id: plugin-version
+    attributes:
+      label: Plugin version
+      description: "`cat .claude-plugin/plugin.json | jq .version` in the plugin dir, or check /plugin list"
+      placeholder: "1.2.3"
+    validations:
+      required: true
+
+  - type: input
+    id: claude-version
+    attributes:
+      label: Claude Code version
+      description: "`claude --version`"
+      placeholder: "2.1.150"
+    validations:
+      required: true
+
+  - type: input
+    id: os
+    attributes:
+      label: OS
+      placeholder: "macOS 15 / Ubuntu 24.04 / Windows 11 + WSL2"

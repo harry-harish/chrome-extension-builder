@@ -79,3 +79,7 @@ Update `manifest.json` paths accordingly.
 - No multi-browser. Manifest differences (Firefox `browser_specific_settings`) must be hand-managed.
 
 When any of these become painful, migrate to WXT.
+
+---
+
+_Scaffolded with [Chrome Extension Builder](https://github.com/harry-harish/chrome-extension-builder), a Claude Code plugin. This line is safe to remove._

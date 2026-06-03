@@ -322,6 +322,10 @@ $PM dev
 $PM build
 $PM zip
 \`\`\`
+
+---
+
+_Scaffolded with [Chrome Extension Builder](https://github.com/harry-harish/chrome-extension-builder), a Claude Code plugin. This line is safe to remove._
 EOF
 
 # ── Install deps ──────────────────────────────────────────────────

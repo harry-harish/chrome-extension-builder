@@ -7,6 +7,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-06-03
+
+### Added
+
+- **Scaffold attribution footer.** Generated project READMEs (WXT scaffold
+  and the vanilla template) now end with a single, clearly-removable
+  attribution line linking back to the plugin. README-footer only — never
+  in extension UI, manifests, or store listings.
+- **Issue templates** (`.github/ISSUE_TEMPLATE/`): bug-report and
+  feature-request forms with framework/command checkboxes — the plugin's
+  telemetry-free way of learning which paths people actually use. Plus a
+  config routing security reports to the private advisory form and
+  questions to Discussions.
+- **GitHub Discussions enabled** with a public
+  [Roadmap](https://github.com/harry-harish/chrome-extension-builder/discussions/1)
+  and three starter issues (icon-dimension validation, headless smoke-test
+  docs, vue/svelte/solid popup templates).
+- **README badge row** (CI, license, plugin, release) and a repo social
+  preview card at `.github/social-preview.png`.
+
+### Changed
+
+- Eight new GitHub topics for discoverability (`chrome-web-store`, `mv3`,
+  `cli`, `developer-tools`, `scaffolding`, `firefox`, `edge`, `vite`).
+
 ## [1.2.3] - 2026-06-01
 
 ### Changed

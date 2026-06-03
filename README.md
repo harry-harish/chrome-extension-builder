@@ -1,5 +1,10 @@
 # Chrome Extension Builder
 
+[![CI](https://github.com/harry-harish/chrome-extension-builder/actions/workflows/validate.yml/badge.svg)](https://github.com/harry-harish/chrome-extension-builder/actions/workflows/validate.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
+[![Claude Code plugin](https://img.shields.io/badge/Claude%20Code-plugin-d97757)](#install)
+[![GitHub release](https://img.shields.io/github/v/release/harry-harish/chrome-extension-builder)](https://github.com/harry-harish/chrome-extension-builder/releases)
+
 A Claude Code plugin for building and shipping Manifest V3 Chrome extensions without tripping over the usual stuff: manifest quirks, permission sprawl, CSP mistakes, broken builds, and Web Store submission prep.
 
 It scaffolds new extensions, audits existing ones, adds common extension surfaces, runs validation, and prepares release artifacts. It works with WXT, Plasmo, CRXJS, and vanilla setups, with WXT as the default path.

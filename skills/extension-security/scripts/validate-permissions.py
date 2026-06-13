@@ -10,8 +10,30 @@ Exit code 1 if any CRITICAL issues; 0 otherwise.
 from __future__ import annotations
 
 import json
+import re
 import sys
 from pathlib import Path
+
+# Chrome match-pattern grammar (developer.chrome.com/docs/extensions/develop/concepts/match-patterns).
+# scheme://host/path, where scheme is * | http | https | file | ftp | urn,
+# host is * | *.<labels> | <labels> (a leading "*." or a bare "*" only), and the
+# path is required and begins with "/". `<all_urls>` is the documented special case.
+_MATCH_SCHEME = r"(?:\*|https?|file|ftp|urn)"
+_MATCH_HOST = r"(?:\*|(?:\*\.)?[^/*]+)"
+_MATCH_PATTERN_RE = re.compile(rf"^{_MATCH_SCHEME}://{_MATCH_HOST}/.*$")
+_FILE_PATTERN_RE = re.compile(r"^file:///.*$")  # file:// has an empty host
+
+
+def is_valid_match_pattern(pattern: str) -> bool:
+    """Heuristic check that a host/match pattern is well-formed. Catches obvious
+    garbage (e.g. '**invalid**') without claiming to be a complete Chrome parser."""
+    if not isinstance(pattern, str) or not pattern:
+        return False
+    if pattern == "<all_urls>":
+        return True
+    if pattern.startswith("file://"):
+        return bool(_FILE_PATTERN_RE.match(pattern))
+    return bool(_MATCH_PATTERN_RE.match(pattern))
 
 # Permissions that trigger Chrome Web Store manual review and broad user warnings.
 HIGH_RISK_PERMISSIONS = {
@@ -73,6 +95,16 @@ def main() -> int:
             emit("WARNING", "host_permissions",
                  f"{h!r} matches all sites of a scheme. Narrow if possible.")
 
+    # Malformed host/match patterns — Chrome silently drops these at load time,
+    # so a typo means the permission you think you have simply isn't granted.
+    for label, patterns in (("host_permissions", host_perms),
+                            ("optional_host_permissions", optional_host)):
+        for h in patterns:
+            if not is_valid_match_pattern(h):
+                emit("WARNING", label,
+                     f"{h!r} is not a valid match pattern (expected scheme://host/path "
+                     "or <all_urls>). Chrome will ignore it at load time.")
+
     # activeTab vs tabs
     has_active = "activeTab" in perms
     has_tabs = "tabs" in perms
@@ -115,6 +147,11 @@ def main() -> int:
         if "<all_urls>" in matches or "*://*/*" in matches:
             emit("WARNING", f"content_scripts[{i}].matches",
                  f"{matches!r} runs on every page. Narrow if possible.")
+        for mp in matches:
+            if not is_valid_match_pattern(mp):
+                emit("WARNING", f"content_scripts[{i}].matches",
+                     f"{mp!r} is not a valid match pattern; Chrome will reject the "
+                     "content script registration.")
 
     print()
     print(f"── Permissions audit: critical={critical} ──")

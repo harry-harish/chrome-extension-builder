@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **Icon dimension validation.** `validate-manifest.py` now reads each PNG
+  icon's actual pixel dimensions (stdlib only — no Pillow) and warns when they
+  don't match the size key the icon is declared under. Wrong-size icons used to
+  pass the file-existence check and only fail later at Chrome Web Store upload.
+- **Host/match-pattern syntax validation.** `validate-permissions.py` now flags
+  malformed match patterns in `host_permissions`, `optional_host_permissions`,
+  and content-script `matches` (e.g. `**invalid**`), which Chrome silently drops
+  at load time.
+
 ### Fixed
 
 - **Windows requirements documented.** The bundled helper scripts assume a

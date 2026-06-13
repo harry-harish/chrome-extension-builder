@@ -79,11 +79,15 @@ CRXJS doesn't copy `_locales/` to `dist/`; `default_locale` is set but `_locales
 Primary docs recommend `@latest` without stating the minimum tested version; fallback note exists but doesn't pin.
 - **Fix:** Document `~0.20.26` as the minimum tested; folds into M1.
 
-### M4 — Icon pixel dimensions not validated (coverage gap)
+### M4 — Icon pixel dimensions not validated (coverage gap) — ✅ RESOLVED
+**Fixed:** `validate-manifest.py` now reads PNG IHDR (stdlib `struct`, no Pillow) and WARNs when an icon's dimensions don't match its declared size key, for both `icons.*` and `action.default_icon.*`. Verified 64×64-declared-48 → WARNING, correct 128 → silent.
+
 `validate-manifest.py` checks icon file existence but not dimensions; wrong-size icons pass locally, fail at CWS upload. (Tracked as issue #2.)
 - **Fix:** Add a stdlib PNG-IHDR dimension check (no Pillow dep) emitting a WARNING on mismatch.
 
-### M5 — Host-permission match-pattern syntax not validated (coverage gap)
+### M5 — Host-permission match-pattern syntax not validated (coverage gap) — ✅ RESOLVED
+**Fixed:** `validate-permissions.py` adds `is_valid_match_pattern()` and WARNs on malformed patterns in `host_permissions`, `optional_host_permissions`, and content-script `matches`. Unit-tested against 7 valid + 7 invalid patterns.
+
 `validate-permissions.py` only string-matches known broad patterns; malformed patterns like `**invalid**` pass silently.
 - **Fix:** Validate host patterns against Chrome's match-pattern spec, or document the limit.
 

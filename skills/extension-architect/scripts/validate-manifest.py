@@ -20,9 +20,26 @@ from __future__ import annotations
 
 import json
 import os
+import struct
 import sys
 from pathlib import Path
 from typing import Any
+
+_PNG_SIGNATURE = b"\x89PNG\r\n\x1a\n"
+
+
+def png_dimensions(path: Path) -> tuple[int, int] | None:
+    """Return (width, height) of a PNG by reading its IHDR chunk, or None if the
+    file isn't a readable PNG. Stdlib only — no Pillow dependency."""
+    try:
+        with path.open("rb") as fh:
+            header = fh.read(24)
+    except OSError:
+        return None
+    if len(header) < 24 or header[:8] != _PNG_SIGNATURE or header[12:16] != b"IHDR":
+        return None
+    width, height = struct.unpack(">II", header[16:24])
+    return width, height
 
 
 def emit(level: str, path: str, key: str, message: str) -> None:
@@ -216,6 +233,27 @@ def validate(manifest_path: Path) -> int:
                  f"file {rel_path!r} does not exist on disk.")
             critical += 1
 
+    def check_icon_dimensions(rel_path: str, declared_size: str, manifest_key: str) -> None:
+        """Warn if an existing PNG icon's pixel dimensions don't match the size
+        key it's declared under (or isn't square). Wrong-size icons pass a
+        file-existence check but get rejected at CWS upload."""
+        nonlocal warnings
+        if not rel_path or not declared_size.isdigit():
+            return
+        target = manifest_path.parent / rel_path.lstrip("/")
+        if not target.exists() or target.suffix.lower() != ".png":
+            return  # missing file is already a CRITICAL; non-PNG icons are skipped
+        dims = png_dimensions(target)
+        if dims is None:
+            return
+        width, height = dims
+        expected = int(declared_size)
+        if width != expected or height != expected:
+            emit("WARNING", p, manifest_key,
+                 f"icon {rel_path!r} is {width}x{height} but declared under size "
+                 f"{declared_size!r}; Chrome Web Store expects a {expected}x{expected} PNG.")
+            warnings += 1
+
     # action.default_popup
     action = m.get("action")
     if isinstance(action, dict):
@@ -226,6 +264,7 @@ def validate(manifest_path: Path) -> int:
             for size, path in di.items():
                 if isinstance(path, str):
                     check_file(path, f"action.default_icon.{size}")
+                    check_icon_dimensions(path, str(size), f"action.default_icon.{size}")
         elif isinstance(di, str):
             check_file(di, "action.default_icon")
 
@@ -262,6 +301,7 @@ def validate(manifest_path: Path) -> int:
         for size, path in top_icons.items():
             if isinstance(path, str):
                 check_file(path, f"icons.{size}")
+                check_icon_dimensions(path, str(size), f"icons.{size}")
 
     # ── Content scripts file existence ──────────────────────────────
     cs_list = m.get("content_scripts", [])

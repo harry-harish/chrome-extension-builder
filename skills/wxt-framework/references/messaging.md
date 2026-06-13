@@ -58,7 +58,7 @@ Background dispatcher:
 
 ```ts
 // entrypoints/background.ts
-import { defineBackground } from 'wxt/sandbox';
+import { defineBackground } from 'wxt/utils/define-background';
 import type { Cmd } from '../src/types/messages';
 
 const handlers = {
@@ -153,7 +153,7 @@ Use a nonce + origin check (see `extension-security/references/content-script-is
 
 ```ts
 // entrypoints/content.ts
-import { defineContentScript } from 'wxt/sandbox';
+import { defineContentScript } from 'wxt/utils/define-content-script';
 
 export default defineContentScript({
   matches: ['*://example.com/*'],

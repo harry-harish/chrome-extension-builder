@@ -7,6 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.1] - 2026-06-13
+
+### Fixed
+
+- **WXT scaffold produced a project that wouldn't install or build.** WXT
+  0.20.26 removed the `wxt/sandbox` export, but the scaffold and the
+  `wxt-framework` skill docs still imported `defineBackground` /
+  `defineContentScript` from `wxt/sandbox`. On a fresh scaffold, `pnpm
+  install` (via the `wxt prepare` postinstall) and `pnpm build` both failed
+  with `"./sandbox" is not exported`. Fixed across all 8 references
+  (`scaffold-wxt.sh`, `wxt-framework/SKILL.md`, `references/entrypoints.md`,
+  `references/messaging.md`, `plasmo-framework/references/csui.md`) to the
+  current subpaths `wxt/utils/define-background` and
+  `wxt/utils/define-content-script`. Verified end-to-end: scaffold → `pnpm
+  install` (rc 0) → `pnpm build` (rc 0) → real `.output/chrome-mv3/manifest.json`
+  → `web-ext lint` 0 errors.
+- **Pinned WXT defensively.** `scaffold-wxt.sh` floated `"wxt": "^0.20.0"`
+  (which is how it drifted onto the breaking 0.20.26); changed to
+  `"wxt": "~0.20.26"` (patch-only) so a future minor can't silently break
+  the scaffold again. Matches the project's reproducible-builds default.
+
 ## [1.3.0] - 2026-06-03
 
 ### Added

@@ -173,7 +173,7 @@ WXT does not ship a CSUI-style helper. If you need Shadow DOM in a WXT project, 
 
 ```ts
 // entrypoints/content.ts (WXT)
-import { defineContentScript } from 'wxt/sandbox';
+import { defineContentScript } from 'wxt/utils/define-content-script';
 
 export default defineContentScript({
   matches: ['<all_urls>'],

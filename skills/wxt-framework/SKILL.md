@@ -82,7 +82,7 @@ WXT discovers entrypoints by file convention. Background:
 
 ```ts
 // entrypoints/background.ts
-import { defineBackground } from 'wxt/sandbox';
+import { defineBackground } from 'wxt/utils/define-background';
 
 export default defineBackground(() => {
   console.log('Background SW started');
@@ -96,7 +96,7 @@ Content script:
 
 ```ts
 // entrypoints/content.ts
-import { defineContentScript } from 'wxt/sandbox';
+import { defineContentScript } from 'wxt/utils/define-content-script';
 
 export default defineContentScript({
   matches: ['*://*.github.com/*'],

@@ -66,7 +66,7 @@ cat > package.json <<EOF
     "postinstall": "wxt prepare"
   },
   "devDependencies": {
-    "wxt": "^0.20.0",
+    "wxt": "~0.20.26",
     "typescript": "^5.5.0"
   }
 }
@@ -174,7 +174,7 @@ EOF
 
 # ── entrypoints/background.ts ─────────────────────────────────────
 cat > entrypoints/background.ts <<'EOF'
-import { defineBackground } from 'wxt/sandbox';
+import { defineBackground } from 'wxt/utils/define-background';
 
 export default defineBackground({
   type: 'module',

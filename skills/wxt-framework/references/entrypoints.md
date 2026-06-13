@@ -32,7 +32,7 @@ entrypoints/
 ## background.ts
 
 ```ts
-import { defineBackground } from 'wxt/sandbox';
+import { defineBackground } from 'wxt/utils/define-background';
 
 export default defineBackground({
   type: 'module',          // ES module SW (modern; preferred)
@@ -66,7 +66,7 @@ Single content script (most common):
 
 ```ts
 // entrypoints/content.ts
-import { defineContentScript } from 'wxt/sandbox';
+import { defineContentScript } from 'wxt/utils/define-content-script';
 
 export default defineContentScript({
   matches: ['*://github.com/*'],

@@ -1,6 +1,6 @@
 {
   "name": "chrome-extension-builder-marketplace",
-  "description": "A single-plugin marketplace that ships Chrome Extension Builder. Install with: /plugin marketplace add harry-harish/chrome-extension-builder && /plugin install chrome-extension-builder@chrome-extension-builder-marketplace",
+  "description": "A single-plugin marketplace that ships Chrome Extension Builder. Also available on the Anthropic community marketplace as chrome-extension-builder@claude-community.",
   "owner": {
     "name": "harry-harish"
   },

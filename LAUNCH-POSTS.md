@@ -1,16 +1,10 @@
 # Launch posts — paste-ready
 
-> **LAUNCH GATE — do not post until the community pin is current.**
-> These posts install via `@claude-community`. As of the last check, that pin is
-> at **v1.3.0 (`294d947`)**, which still ships the WXT scaffold bug fixed in
-> v1.3.1 — `/chrome-ext:new` with WXT would fail to build for anyone who installs
-> that way. Posting is safe once the pin advances to **`dca0e29` (v1.3.1) or later**.
-> Check before posting:
-> ```
-> curl -s https://raw.githubusercontent.com/anthropics/claude-plugins-community/main/.claude-plugin/marketplace.json | grep -A3 chrome-extension-builder
-> ```
-> If you want to launch before the pin bumps, swap every `@claude-community` block
-> below for the repo-direct fallback (it serves the latest release and works today).
+> Note: `@claude-community` installs cleanly. While the community catalog pin
+> briefly trails the latest release, a WXT scaffold from `/chrome-ext:new` may
+> need one import fixed — Claude resolves it in-session, and it self-resolves
+> once the pin bumps. The repo-direct path (`harry-harish/chrome-extension-builder`)
+> always serves the latest release if you'd rather avoid that entirely.
 
 Copy blocks verbatim. Demo video:
 https://github.com/harry-harish/chrome-extension-builder/releases/tag/v1.3.1

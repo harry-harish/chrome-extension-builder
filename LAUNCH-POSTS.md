@@ -4,15 +4,14 @@ Copy blocks verbatim. Install commands are verified working (v1.3.1,
 `@claude-community` pin live). Demo video:
 https://github.com/harry-harish/chrome-extension-builder/releases/tag/v1.3.1
 
-Install (used in posts):
+Install (used in posts) — repo-direct serves the latest release and is the path to use while the community-catalog pin catches up:
 
 ```
-/plugin marketplace add anthropics/claude-plugins-community
-/plugin install chrome-extension-builder@claude-community
+/plugin marketplace add harry-harish/chrome-extension-builder
+/plugin install chrome-extension-builder@chrome-extension-builder-marketplace
 ```
 
-Fallback (also works): `/plugin marketplace add harry-harish/chrome-extension-builder`
-then `/plugin install chrome-extension-builder@chrome-extension-builder-marketplace`
+Also on the community marketplace (may lag a release): `/plugin marketplace add anthropics/claude-plugins-community` then `/plugin install chrome-extension-builder@claude-community`
 
 Suggested order: Show HN (Sat/Sun ~12:00 UTC) → r/ClaudeCode (+4–6h) →
 r/ClaudeAI + r/chrome_extensions (next day, different bodies) → X/Bluesky →
@@ -224,8 +223,8 @@ What I actually learned, across all three stories, is that the hard part of a co
 The plugin is MIT and lives at [github.com/harry-harish/chrome-extension-builder](https://github.com/harry-harish/chrome-extension-builder).
 
 ```
-/plugin marketplace add anthropics/claude-plugins-community
-/plugin install chrome-extension-builder@claude-community
+/plugin marketplace add harry-harish/chrome-extension-builder
+/plugin install chrome-extension-builder@chrome-extension-builder-marketplace
 ```
 
 It's new, so I'm more interested in real-repo feedback than stars. If you run `/chrome-ext:new` on a real extension and it generates something that won't install, or `/chrome-ext:validate` misses a CSP problem it should have caught, open an issue with the manifest. The validators only get better against manifests that actually broke, and after war story two, I trust real failures more than green checks.

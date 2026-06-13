@@ -115,7 +115,9 @@ For WXT (default):
 # prompt is answered by whichever PM is active when invoking via dlx.
 #
 # Run from the parent dir; WXT creates <project-name>/.
-${PM} dlx wxt@latest init <project-name> --template react-ts
+# Pinned to ~0.20.26 (minimum tested) — 0.20.x moved the defineBackground /
+# defineContentScript exports, so a floating @latest can break the scaffold.
+${PM} dlx wxt@~0.20.26 init <project-name> --template react-ts
 cd <project-name>
 ${PM} install
 ```
@@ -128,11 +130,16 @@ For **fully non-interactive** scaffolding (CI, headless agent runs), use the bun
 bash "${CLAUDE_PLUGIN_ROOT}/skills/wxt-framework/scripts/scaffold-wxt.sh" <project-name> ${UI_FRAMEWORK:-react} ${PM:-pnpm}
 ```
 
-For Plasmo:
+For Plasmo (only for an existing Plasmo project or when CSUI is specifically
+needed — otherwise steer the user to WXT):
 
 ```bash
 ${PM} create plasmo <project-name>
 cd <project-name>
+# Upstream create-plasmo (0.90.x) pins "plasmo": "workspace:*", which breaks the
+# next install with ERR_PNPM_WORKSPACE_PKG_NOT_FOUND. Repin to a real version
+# first. (Skip if package.json already shows a normal "plasmo": "^x.y.z".)
+${PM} pkg set dependencies.plasmo=latest
 ${PM} install
 ```
 

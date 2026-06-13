@@ -18,10 +18,15 @@ Always, unless the user has a specific reason to pick something else. Per Extens
 `wxt init` is interactive: it prompts for **template** and **package manager**. The `--template` flag pre-selects the template so only the package-manager prompt remains; the PM prompt defaults to whichever PM you invoked `dlx`/`exec` through.
 
 ```bash
-pnpm dlx wxt@latest init <project-name> --template react-ts
+pnpm dlx wxt@~0.20.26 init <project-name> --template react-ts
 cd <project-name>
 pnpm install
 ```
+
+`~0.20.26` is the minimum tested version. WXT 0.20.x relocated the
+`defineBackground` / `defineContentScript` exports (out of `wxt/sandbox`), so a
+floating `@latest` can scaffold a project whose entrypoints no longer import
+correctly. Pin to a tested line and bump deliberately.
 
 **Default to the `-ts` variant** (`react-ts`, `vue-ts`, `svelte-ts`, `solid-ts`) — every reference extension in 2026 uses TypeScript and the plugin's `userConfig.typescript` defaults to `true`. Pick the non-TS variant only when you specifically opt out.
 
@@ -206,7 +211,7 @@ Load `references/messaging.md` for the four-execution-context pattern.
 
 ## Scripts in this skill
 
-- `scripts/scaffold-wxt.sh` — runs `pnpm dlx wxt@latest init` with sane defaults.
+- `scripts/scaffold-wxt.sh` — writes the WXT project files directly (it does *not* call `wxt init`), pinning `wxt` to `~0.20.26` in the generated `package.json`.
 
 ## Things not to do
 

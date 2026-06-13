@@ -9,6 +9,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **Plasmo scaffold produced a project that wouldn't install (upstream bug).**
+  `pnpm create plasmo` (create-plasmo 0.90.x) pins `"plasmo": "workspace:*"`,
+  so the next `pnpm install` fails with `ERR_PNPM_WORKSPACE_PKG_NOT_FOUND`. The
+  `plasmo-framework` skill and `/chrome-ext:new` Plasmo path now warn about the
+  upstream breakage, document the `pnpm pkg set dependencies.plasmo=latest`
+  workaround, and steer new projects to WXT. (Existing Plasmo projects are
+  unaffected — they never re-run the scaffold.)
+- **Interactive WXT scaffold docs pinned to `wxt@~0.20.26`.** `commands/new.md`
+  and the `wxt-framework` skill used `wxt@latest init`; since 0.20.x relocated
+  the `defineBackground`/`defineContentScript` exports, a floating `@latest`
+  can scaffold a project that no longer imports correctly. Also corrected a doc
+  line that wrongly said `scaffold-wxt.sh` runs `wxt init` (it writes files
+  directly and already pins `~0.20.26`).
 - **`validate-csp.sh` now honors the exit-code contract.** It exited with the
   raw critical count (e.g. `3`) instead of `1`; now `exit 1` on any critical,
   `0` otherwise — consistent with the other validators.

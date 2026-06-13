@@ -21,11 +21,26 @@ Use Plasmo only when:
 
 ## Scaffold
 
+> **Known breakage (upstream).** As of `create-plasmo` 0.90.x, `pnpm create
+> plasmo` generates a `package.json` that pins `"plasmo": "workspace:*"`. Outside
+> Plasmo's own monorepo that protocol can't resolve, so the very next `pnpm
+> install` fails with `ERR_PNPM_WORKSPACE_PKG_NOT_FOUND`. This is a bug in
+> `create-plasmo`, not something the plugin can fix. **For a new project, prefer
+> WXT** (`/chrome-ext:new` defaults to it). Only scaffold Plasmo if you
+> specifically need its CSUI tooling — and if you do, apply the workaround below.
+
 ```bash
 pnpm create plasmo <project-name>
 cd <project-name>
+# Workaround for the upstream workspace:* bug — repin plasmo to a real version
+# before installing. (Skip this only if a future create-plasmo has fixed it and
+# package.json already shows a normal "plasmo": "^x.y.z" range.)
+pnpm pkg set dependencies.plasmo=latest
 pnpm install
 ```
+
+If you already have a working Plasmo project (the common reason to use this
+skill), none of the above applies — you never re-run `create plasmo`.
 
 Layout:
 

@@ -138,25 +138,94 @@ Would love feedback on where it falls short for real <FRAMEWORK> projects.
 
 ---
 
-## 7. dev.to article
+## 7. dev.to article (complete, paste-ready)
 
-**Title:** `What I learned building a Claude Code plugin for MV3 Chrome extensions`
-**Tags:** `claude, chromeextensions, webdev, opensource`
+In the dev.to editor, set **Title** and **Tags** in their fields, then paste the body below.
 
-Section outline (expand each in your own voice; keep it a real walkthrough, not a pitch — dev.to removes primarily-promotional posts):
-1. The repeated pain in extension work
-2. Why generic coding assistants are not enough here
-3. The command model: create, validate, add feature, publish, migrate
-4. Why safety rails matter more than one-shot generation
-5. WXT as default, but not mandatory
-6. Rough edges and what still needs human judgment
-7. Link to repo + invitation for real-repo feedback
+**Title:** What I learned building a Claude Code plugin for MV3 Chrome extensions
 
----
+**Tags:** `claude`, `chromeextensions`, `webdev`, `opensource`
 
-## Rules (verified — don't trip these)
-- Different body per subreddit (duplicate text gets shadow-flagged).
-- No upvote solicitation on HN (voting-ring detection).
-- Don't submit a blog post as Show HN (blog posts are off-topic there — submit the repo).
-- Don't lead with MV2 migration as the hook (stale in 2026); CWS-review pain is the live hook.
-- Write HN title/comments yourself, not LLM-generated (HN penalizes that).
+**Body:**
+
+Claude Code writes extension code fine. That was never the problem.
+
+Ask it for a content script that highlights matched text, or a background service worker that debounces a fetch, and it produces something reasonable on the first try. Where it trips is everything around the code: the Manifest V3 rules, the permission model, the content security policy, and the unwritten expectations of Chrome Web Store review. Those are the parts that fail late, at install, at build, or three weeks after you thought you shipped. And they fail quietly.
+
+I spent a while turning that gap into a plugin called Chrome Extension Builder. This is less a pitch for the plugin and more a writeup of the three things that broke while I built it, because each one taught me something I'd want to know if I were building any developer tool, plugin or not.
+
+## The actual problem
+
+A model that writes plausible code will also write a plausible manifest. The trouble is that "plausible" and "valid" diverge hard in MV3. A manifest with `content_security_policy.extension_pages` containing `unsafe-eval` looks fine to a generator that learned from years of MV2 examples. It is forbidden in MV3 and the extension will not load. The same goes for over-broad host permissions (`<all_urls>` when `activeTab` would do), MV2 background pages instead of a service worker, and remote script in the CSP.
+
+So the design constraint was never "make Claude write extensions." It was: catch the MV3-specific mistakes deterministically, before they reach a human reviewer or a user's browser. That pushed the whole thing toward validators and hooks rather than cleverer prompts.
+
+The command surface ended up small on purpose. Five slash commands: `/chrome-ext:new` runs an eight-phase guided scaffold; `/chrome-ext:validate` runs the manifest, CSP, and permission checks; `/chrome-ext:add-feature` wires in a popup or content script; `/chrome-ext:publish` builds release artifacts; and `/chrome-ext:migrate-mv2` walks an old extension forward. Three agents back them: an architect that designs but has no Bash, a read-only manifest auditor, and a test runner that can build, lint, and drive Playwright but cannot edit files. The capability boundaries are deliberate: the thing that audits your manifest physically cannot rewrite it.
+
+The defaults are opinionated. MV3 only, TypeScript, `activeTab` over `<all_urls>`, a strict CSP with no `unsafe-eval`, no inline, no remote, `_locales` for i18n, typed message passing, reproducible builds. WXT is the default framework, but not mandatory. Plasmo, CRXJS, and vanilla MV3 are all supported. I'll come back to why "default but not mandatory" matters, because the default framework is exactly what broke first.
+
+## War story 1: a floating dependency drifted onto a breaking release
+
+WXT 0.20.26 removed the `wxt/sandbox` export.
+
+My scaffold and skill docs imported `defineBackground` and `defineContentScript` from `wxt/sandbox`, the way the docs showed when I wrote them. The dependency was pinned at `^0.20.0`. So the day 0.20.26 published, a fresh scaffold started failing at `pnpm install` (the `wxt prepare` postinstall step choked) and again at `pnpm build`, with `./sandbox is not exported`. Nobody changed my code. The caret did.
+
+The fix was mechanical: import from `wxt/utils/define-background` and `wxt/utils/define-content-script`, and pin `~0.20.26` instead of letting the caret float across a minor that turned out to carry a breaking change.
+
+The lesson is older than this plugin and I keep relearning it. A scaffolding tool's job is to emit code that compiles today and tomorrow. A floating range on a fast-moving dependency quietly delegates that promise to an upstream maintainer's versioning discipline. When the thing you generate is supposed to be a known-good starting point, pin it. The whole value of a scaffold is that it works on the first run; a caret can take that away without a single line of your own changing.
+
+This is also the clearest argument for "WXT default, not mandatory." Betting the entire tool on one framework's API stability is how one upstream release becomes your outage. Keeping Plasmo, CRXJS, and vanilla MV3 as real paths means a break in one default doesn't take everyone down with it.
+
+## War story 2: the validator that lies (politely)
+
+`claude plugin validate` passes manifests that the runtime loader then rejects.
+
+I hit this twice. Once with a `userConfig` field that included an `enum` key: `validate` was happy, install was not. Once with a `hooks.json` that was missing its outer `"hooks"` wrapper. Again: `validate` green, install red. Both times I'd run the validator, seen it pass, committed, and only found out at the real install step that the CLI validator is a strict subset of the runtime schema. It checks for a class of errors. It does not check for all of them.
+
+The fix wasn't to argue with the validator. It was to stop trusting it as the source of truth. I added a CI job that runs the actual `claude plugin install` against the built plugin, because the only ground truth for "does this load" is loading it. (I also filed the divergence upstream.)
+
+The transferable lesson: a validator is a model of correctness, and every model is incomplete. If a green check from a linter or schema validator is your release gate, you are gating on the model, not on reality. Where it's cheap to run the real thing (an actual install, an actual boot, an actual build), make that the gate and let the fast validator be the early warning, not the verdict.
+
+Here's where the project's own validators sit on the other side of that line: they run against real manifests, not a schema's idea of one. A clean run looks like:
+
+```
+── Summary ─ critical: 0, warnings: 0 ──
+```
+
+And when I deliberately feed it an MV3 manifest with `unsafe-eval` in the CSP, it catches it and exits non-zero:
+
+```
+CRITICAL  content_security_policy.extension_pages  contains 'unsafe-eval'. Forbidden in MV3.
+── CSP validation: critical=1 ──
+```
+
+That `critical=1` isn't cosmetic. The PostToolUse hook runs these validators on every manifest write and exits 2 on a critical finding, so a generated manifest with a forbidden CSP fails the write instead of sailing through to a build. There's a PreToolUse hook too, which blocks `chrome-webstore-upload-cli --auto-publish` unless `CONFIRM_PUBLISH_LIVE=1` is set, so the tool does not push a live store release by accident. And a UserPromptSubmit hook nudges when it sees MV2 mentions, since "convert my MV2 extension" is where a lot of the forbidden-API mistakes originate.
+
+## War story 3: don't force-push a repo something else pins by SHA
+
+This one cost me three weeks and I didn't notice for most of them.
+
+The community marketplace pins each plugin to a specific commit SHA and auto-bumps that pin over time. I force-pushed my repo (to fix a commit author identity, of all things), and that force-push orphaned the exact commit the marketplace had pinned. The auto-bump, finding its anchor gone, silently skipped my plugin. For about three weeks the published install served a stale, broken version. No error surfaced to me. The CI was green. My local was fine. The only people seeing the problem were the people installing it, and I wasn't one of them.
+
+The lesson is specific and I'll state it plainly: if an external system pins your commits by SHA, your history is now an API. Rewriting it is a breaking change to a consumer you can't see. Force-push is a local-feeling operation with a remote, invisible blast radius. The author-identity cleanup I wanted was not worth orphaning a pinned commit; a fresh commit on top would have cost nothing.
+
+More generally: the failure modes that hurt most are the ones with no error message. A red build you fix in an hour. A silently-skipped auto-bump you find when someone mentions in passing that the install "doesn't work for them." Build the alarm for the silent failures first.
+
+## The honest non-goals
+
+I want to be precise about what this does not do, because the failures above made me allergic to overpromising.
+
+It does not guarantee Chrome Web Store approval. Review is done by humans against policy, and no validator predicts a reviewer. It does not replace the WXT, Plasmo, or CRXJS docs; it leans on them and points you at them, it is not a substitute for reading them. It does not make unsafe permissions acceptable; it makes them visible and harder to ship by accident, which is not the same thing. And it does not publish a live store release by accident; that's the whole point of the confirmation gate.
+
+What I actually learned, across all three stories, is that the hard part of a code-generation tool isn't the generation. It's the verification, the pinning, and the boring discipline around the seams where your tool meets someone else's system. The model writes the content script. The work is making sure the manifest around it survives install, build, store review, and the next upstream release.
+
+## If you want to try it or break it
+
+The plugin is MIT and lives at [github.com/harry-harish/chrome-extension-builder](https://github.com/harry-harish/chrome-extension-builder).
+
+```
+/plugin marketplace add anthropics/claude-plugins-community
+/plugin install chrome-extension-builder@claude-community
+```
+
+It's new, so I'm more interested in real-repo feedback than stars. If you run `/chrome-ext:new` on a real extension and it generates something that won't install, or `/chrome-ext:validate` misses a CSP problem it should have caught, open an issue with the manifest. The validators only get better against manifests that actually broke, and after war story two, I trust real failures more than green checks.

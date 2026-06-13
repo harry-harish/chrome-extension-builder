@@ -128,7 +128,7 @@ github.com/harry-harish/chrome-extension-builder
 ## 6. Discord (WXT / Plasmo / CRXJS — swap framework name)
 
 ```
-Hey all — I built a Claude Code plugin that scaffolds <FRAMEWORK> extensions with MV3 validation baked in (manifest schema, permission audit, CSP checks, Chrome Web Store pre-submission checklist). <FRAMEWORK> is one of the supported scaffolding targets.
+Hey all, I built a Claude Code plugin that scaffolds <FRAMEWORK> extensions with MV3 validation baked in (manifest schema, permission audit, CSP checks, Chrome Web Store pre-submission checklist). <FRAMEWORK> is one of the supported scaffolding targets.
 
 Repo: https://github.com/harry-harish/chrome-extension-builder
 
@@ -183,7 +183,7 @@ I hit this twice. Once with a `userConfig` field that included an `enum` key: `v
 
 The fix wasn't to argue with the validator. It was to stop trusting it as the source of truth. I added a CI job that runs the actual `claude plugin install` against the built plugin, because the only ground truth for "does this load" is loading it. (I also filed the divergence upstream.)
 
-The transferable lesson: a validator is a model of correctness, and every model is incomplete. If a green check from a linter or schema validator is your release gate, you are gating on the model, not on reality. Where it's cheap to run the real thing (an actual install, an actual boot, an actual build), make that the gate and let the fast validator be the early warning, not the verdict.
+The same trap waits in any toolchain: a validator is a model of correctness, and every model is incomplete. If a green check from a linter or schema validator is your release gate, you are gating on the model, not on reality. Where it's cheap to run the real thing (an actual install, an actual boot, an actual build), make that the gate and let the fast validator be the early warning, not the verdict.
 
 Here's where the project's own validators sit on the other side of that line: they run against real manifests, not a schema's idea of one. A clean run looks like:
 

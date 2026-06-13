@@ -1,17 +1,28 @@
 # Launch posts — paste-ready
 
-Copy blocks verbatim. Install commands are verified working (v1.3.1,
-`@claude-community` pin live). Demo video:
+> **LAUNCH GATE — do not post until the community pin is current.**
+> These posts install via `@claude-community`. As of the last check, that pin is
+> at **v1.3.0 (`294d947`)**, which still ships the WXT scaffold bug fixed in
+> v1.3.1 — `/chrome-ext:new` with WXT would fail to build for anyone who installs
+> that way. Posting is safe once the pin advances to **`dca0e29` (v1.3.1) or later**.
+> Check before posting:
+> ```
+> curl -s https://raw.githubusercontent.com/anthropics/claude-plugins-community/main/.claude-plugin/marketplace.json | grep -A3 chrome-extension-builder
+> ```
+> If you want to launch before the pin bumps, swap every `@claude-community` block
+> below for the repo-direct fallback (it serves the latest release and works today).
+
+Copy blocks verbatim. Demo video:
 https://github.com/harry-harish/chrome-extension-builder/releases/tag/v1.3.1
 
-Install (used in posts) — repo-direct serves the latest release and is the path to use while the community-catalog pin catches up:
+Install (used in posts):
 
 ```
-/plugin marketplace add harry-harish/chrome-extension-builder
-/plugin install chrome-extension-builder@chrome-extension-builder-marketplace
+/plugin marketplace add anthropics/claude-plugins-community
+/plugin install chrome-extension-builder@claude-community
 ```
 
-Also on the community marketplace (may lag a release): `/plugin marketplace add anthropics/claude-plugins-community` then `/plugin install chrome-extension-builder@claude-community`
+Repo-direct fallback (works today, always the latest release): `/plugin marketplace add harry-harish/chrome-extension-builder` then `/plugin install chrome-extension-builder@chrome-extension-builder-marketplace`
 
 Suggested order: Show HN (Sat/Sun ~12:00 UTC) → r/ClaudeCode (+4–6h) →
 r/ClaudeAI + r/chrome_extensions (next day, different bodies) → X/Bluesky →
@@ -223,8 +234,8 @@ What I actually learned, across all three stories, is that the hard part of a co
 The plugin is MIT and lives at [github.com/harry-harish/chrome-extension-builder](https://github.com/harry-harish/chrome-extension-builder).
 
 ```
-/plugin marketplace add harry-harish/chrome-extension-builder
-/plugin install chrome-extension-builder@chrome-extension-builder-marketplace
+/plugin marketplace add anthropics/claude-plugins-community
+/plugin install chrome-extension-builder@claude-community
 ```
 
 It's new, so I'm more interested in real-repo feedback than stars. If you run `/chrome-ext:new` on a real extension and it generates something that won't install, or `/chrome-ext:validate` misses a CSP problem it should have caught, open an issue with the manifest. The validators only get better against manifests that actually broke, and after war story two, I trust real failures more than green checks.

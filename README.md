@@ -134,7 +134,7 @@ This plugin does not:
 - Existing repos with unusual layouts may need cleanup before automation works well.
 - Store submission details can change faster than tooling does.
 - Some UI and product decisions still need a human with taste.
-- Windows users need WSL or Git Bash; the helper scripts are not yet ported to a cross-platform runtime (planned post-launch).
+- Windows users need WSL or Git Bash; the helper scripts are not yet ported to a cross-platform runtime ([#5](https://github.com/harry-harish/chrome-extension-builder/issues/5)).
 
 ## A good fit
 

@@ -46,7 +46,7 @@ CRXJS doesn't copy `_locales/` to `dist/`; `default_locale` is set but `_locales
 - **Fix:** Document putting `_locales/` in `public/` (or drop `default_locale` from the template).
 
 ### H4 — Windows: bash scripts block non-WSL users — ✅ RESOLVED (documented)
-**Fixed:** README Runtime requirements + Known rough edges now state the WSL/Git Bash requirement. Full Node port deferred post-launch (tracking issue not filed — needs user authorization for the external write; see phase-boundary note).
+**Fixed:** README Runtime requirements + Known rough edges now state the WSL/Git Bash requirement. Full Node port deferred post-launch, tracked in [#5](https://github.com/harry-harish/chrome-extension-builder/issues/5).
 
 `/chrome-ext:new`, `validate`, `publish` invoke `bash …/*.sh`. Windows users without WSL/Git Bash hit `bash: command not found` — entire workflows blocked. Undocumented.
 - **Fix (scope TBD):** At minimum document the WSL/Git Bash requirement in README + runtime requirements. (Full Node port of the scripts is larger; decide scope.)

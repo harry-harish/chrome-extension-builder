@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-06-13
+
+Pre-launch deep audit: a 4-dimension adversarial review (cross-framework
+breakage, dependency drift, validator correctness, security/cross-platform)
+that fixed 16 verified findings — including a publish-guard gap — and added CI
+guardrails so each fixed class is regression-protected.
+
 ### Added
 
 - **CI regression guardrails.** Three jobs in `.github/workflows/validate.yml`:

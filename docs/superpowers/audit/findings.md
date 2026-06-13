@@ -45,11 +45,15 @@ Following `crxjs-vite/SKILL.md` exactly yields `TS2304: Cannot find name 'chrome
 CRXJS doesn't copy `_locales/` to `dist/`; `default_locale` is set but `_locales/` is absent in the build → validator warns.
 - **Fix:** Document putting `_locales/` in `public/` (or drop `default_locale` from the template).
 
-### H4 — Windows: bash scripts block non-WSL users
+### H4 — Windows: bash scripts block non-WSL users — ✅ RESOLVED (documented)
+**Fixed:** README Runtime requirements + Known rough edges now state the WSL/Git Bash requirement. Full Node port deferred post-launch (tracking issue not filed — needs user authorization for the external write; see phase-boundary note).
+
 `/chrome-ext:new`, `validate`, `publish` invoke `bash …/*.sh`. Windows users without WSL/Git Bash hit `bash: command not found` — entire workflows blocked. Undocumented.
 - **Fix (scope TBD):** At minimum document the WSL/Git Bash requirement in README + runtime requirements. (Full Node port of the scripts is larger; decide scope.)
 
-### H5 — Windows: `build-zip.sh` needs `zip`
+### H5 — Windows: `build-zip.sh` needs `zip` — ✅ RESOLVED (documented)
+**Fixed:** the `zip` requirement is called out in README Runtime requirements alongside the bash requirement; cross-platform archiver folded into the deferred Node-port item.
+
 `build-zip.sh` vanilla/CRXJS branches call bare `zip` → fails on Windows without zip. (WXT/Plasmo use framework-native zip.)
 - **Fix:** Document the `zip` requirement, or add a PowerShell/archiver fallback. Pairs with H4 (Windows requirements doc).
 

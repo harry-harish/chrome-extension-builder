@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **Windows requirements documented.** The bundled helper scripts assume a
+  POSIX shell, and `build-zip.sh` shells out to `zip`. README now states that
+  Windows users must run the plugin inside WSL or Git Bash. A cross-platform
+  port of the helpers is planned post-launch.
 - **Plasmo scaffold produced a project that wouldn't install (upstream bug).**
   `pnpm create plasmo` (create-plasmo 0.90.x) pins `"plasmo": "workspace:*"`,
   so the next `pnpm install` fails with `ERR_PNPM_WORKSPACE_PKG_NOT_FOUND`. The

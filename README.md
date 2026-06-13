@@ -84,6 +84,7 @@ Use the one that matches your project. The plugin should help you move faster, n
 - Node.js 18+
 - pnpm, npm, yarn, or bun
 - Python 3.10+ for validator scripts
+- A POSIX shell (`bash`) and `zip` on `PATH`. macOS and Linux have these by default; **on Windows, run the plugin inside WSL or Git Bash** — the scaffold, validate, and publish flows invoke bundled `.sh` scripts (and `build-zip.sh` shells out to `zip` for vanilla/CRXJS projects), which won't run in plain PowerShell or `cmd`.
 - Playwright Chromium for E2E tests
 - Optional GitHub and Chrome Web Store credentials for publishing flows
 
@@ -123,6 +124,7 @@ This plugin does not:
 - Existing repos with unusual layouts may need cleanup before automation works well.
 - Store submission details can change faster than tooling does.
 - Some UI and product decisions still need a human with taste.
+- Windows users need WSL or Git Bash; the helper scripts are not yet ported to a cross-platform runtime (planned post-launch).
 
 ## A good fit
 

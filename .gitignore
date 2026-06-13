@@ -22,3 +22,6 @@ LAUNCH.md
 
 # Local-only video production worksheet (launch choreography)
 demo/video/VIDEO.md
+
+# video-use working dir (intermediates, VO mp3s, caps) — keep deliverables only
+demo/video/edit/

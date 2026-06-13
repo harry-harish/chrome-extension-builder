@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Security
+
+- **Publish guard rewritten to block the actual live-publish commands.** The
+  PreToolUse hook previously blocked `--auto-publish`, a flag that
+  `chrome-webstore-upload-cli` v4 no longer has — so the real live-publish
+  paths (`chrome-webstore-upload publish`, or a bare `chrome-webstore-upload`
+  that uploads-and-publishes in one shot) bypassed the guard entirely. The
+  hook now allows only the explicit `upload` (draft) subcommand and blocks
+  `publish`/bare invocations unless prefixed with `CONFIRM_PUBLISH_LIVE=1`.
+
+### Changed
+
+- **Publishing docs updated to the `chrome-webstore-upload-cli` v4 CLI.**
+  v4 removed the `--client-id`/`--client-secret`/`--refresh-token`/`--auto-publish`
+  flags: credentials now come from the `CLIENT_ID`/`CLIENT_SECRET`/`REFRESH_TOKEN`
+  environment variables, and live publish uses a separate `publish` subcommand.
+  Updated `commands/publish.md`, `extension-publishing/SKILL.md`, the GitHub
+  Actions template, and the OAuth setup guide; pinned the `dlx` invocations to
+  `chrome-webstore-upload-cli@4` so a future major can't break the flags again.
+
 ## [1.3.1] - 2026-06-13
 
 ### Fixed

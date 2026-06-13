@@ -25,7 +25,7 @@ Please include:
 - A validator that misses a class of MV3 violation that should always block.
 - A scaffolder that emits a manifest with unsafe defaults (e.g. `unsafe-eval`,
   remote `script-src`, hardcoded secrets).
-- The `--auto-publish` PreToolUse gate bypassable in an unintended way.
+- The live-publish PreToolUse gate (blocks `chrome-webstore-upload` `publish`/bare invocations unless `CONFIRM_PUBLISH_LIVE=1`) bypassable in an unintended way.
 - An agent with tool grants broader than its stated job (e.g. an auditor
   agent gaining `Write`).
 - Plugin commands that read or modify files outside the active project directory.

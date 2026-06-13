@@ -111,32 +111,24 @@ Full walkthrough: `references/oauth-setup.md`.
 
 ## Programmatic upload
 
-`chrome-webstore-upload-cli` has one command — `upload` — which creates a new draft version. There is no separate `publish` subcommand. To publish live in the same step, add the `--auto-publish` flag.
+`chrome-webstore-upload-cli` (v4) takes a subcommand: `upload` creates a new draft version, `publish` pushes the last uploaded version live, and **running it with no subcommand uploads and publishes live in one shot**. Credentials come from required environment variables (`CLIENT_ID`, `CLIENT_SECRET`, `REFRESH_TOKEN`); `EXTENSION_ID` is an env var or the `--extension-id` flag. The v3 `--client-id`/`--client-secret`/`--refresh-token`/`--auto-publish` flags were removed in v4.
 
-Draft upload (recommended default):
-
-```bash
-pnpm dlx chrome-webstore-upload-cli@latest upload \
-  --source <zip-path> \
-  --extension-id "$EXTENSION_ID" \
-  --client-id "$CLIENT_ID" \
-  --client-secret "$CLIENT_SECRET" \
-  --refresh-token "$REFRESH_TOKEN"
-```
-
-Upload + publish live in one shot (only with explicit user authorization):
+Draft upload (recommended default — the `upload` subcommand):
 
 ```bash
-CONFIRM_PUBLISH_LIVE=1 pnpm dlx chrome-webstore-upload-cli@latest upload \
+pnpm dlx chrome-webstore-upload-cli@4 upload \
   --source <zip-path> \
-  --extension-id "$EXTENSION_ID" \
-  --client-id "$CLIENT_ID" \
-  --client-secret "$CLIENT_SECRET" \
-  --refresh-token "$REFRESH_TOKEN" \
-  --auto-publish
+  --extension-id "$EXTENSION_ID"
 ```
 
-**Default to draft-only.** The plugin's PreToolUse hook blocks any Bash command containing `--auto-publish` unless prefixed with `CONFIRM_PUBLISH_LIVE=1`, so accidentally typing the flag in a session will not push to production.
+Publish live (only with explicit user authorization — the separate `publish` step):
+
+```bash
+CONFIRM_PUBLISH_LIVE=1 pnpm dlx chrome-webstore-upload-cli@4 publish \
+  --extension-id "$EXTENSION_ID"
+```
+
+**Default to the `upload` (draft) subcommand.** The plugin's PreToolUse hook blocks the `publish` subcommand and bare `chrome-webstore-upload` invocations (both publish live) unless prefixed with `CONFIRM_PUBLISH_LIVE=1`; the `upload` subcommand is always allowed.
 
 A bad release going live is much worse than a draft sitting unreviewed. Drafts can be reviewed and discarded in the CWS dashboard; live releases must be replaced with a new version.
 
@@ -166,12 +158,9 @@ jobs:
           name: extension-${{ github.ref_name }}
           path: .output/*.zip
       - run: |
-          pnpm dlx chrome-webstore-upload-cli@latest upload \
+          pnpm dlx chrome-webstore-upload-cli@4 upload \
             --source .output/*.zip \
-            --extension-id "$EXTENSION_ID" \
-            --client-id "$CLIENT_ID" \
-            --client-secret "$CLIENT_SECRET" \
-            --refresh-token "$REFRESH_TOKEN"
+            --extension-id "$EXTENSION_ID"
         env:
           EXTENSION_ID: ${{ secrets.EXTENSION_ID }}
           CLIENT_ID: ${{ secrets.CW_CLIENT_ID }}

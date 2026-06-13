@@ -18,7 +18,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "INPUT=$(cat); CMD=$(printf '%s' \"$INPUT\" | python3 -c \"import json,sys; d=json.load(sys.stdin); print(d.get('tool_input',{}).get('command',''))\"); if echo \"$CMD\" | grep -qE 'chrome-webstore-upload(-cli)?[^|;&]*--auto-publish' && ! echo \"$CMD\" | grep -q 'CONFIRM_PUBLISH_LIVE=1'; then echo 'BLOCKED: --auto-publish would push the upload LIVE to the Chrome Web Store, bypassing manual review. Re-run via /chrome-ext:publish (uploads as draft by default), or prefix the command with CONFIRM_PUBLISH_LIVE=1 if you intend to publish live.' 1>&2; exit 2; fi; exit 0",
+            "command": "INPUT=$(cat); CMD=$(printf '%s' \"$INPUT\" | python3 -c \"import json,sys; d=json.load(sys.stdin); print(d.get('tool_input',{}).get('command',''))\"); if echo \"$CMD\" | grep -qE 'chrome-webstore-upload(-cli)?'; then if echo \"$CMD\" | grep -q 'CONFIRM_PUBLISH_LIVE=1'; then exit 0; fi; if echo \"$CMD\" | grep -qE 'chrome-webstore-upload(-cli)? +upload([[:space:]]|$)' && ! echo \"$CMD\" | grep -qE 'chrome-webstore-upload(-cli)? +publish([[:space:]]|$)'; then exit 0; fi; echo 'BLOCKED: chrome-webstore-upload with the publish subcommand (or with no subcommand) publishes LIVE to the Chrome Web Store, bypassing manual review. Use the upload subcommand to push a draft instead, or prefix the command with CONFIRM_PUBLISH_LIVE=1 if you intend to publish live.' 1>&2; exit 2; fi; exit 0",
             "timeout": 5
           }
         ]

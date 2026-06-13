@@ -80,34 +80,35 @@ Add them to GitHub Actions secrets (or to your local `.env`, **gitignored**):
 
 ## Step 7: test with chrome-webstore-upload-cli
 
+v4 reads OAuth credentials from the fixed env vars `CLIENT_ID`, `CLIENT_SECRET`, and `REFRESH_TOKEN` (the v3 `--client-id`/`--client-secret`/`--refresh-token` flags were removed). Map your `CW_*` secrets onto those names for the command:
+
 ```bash
-pnpm dlx chrome-webstore-upload-cli@latest upload \
+CLIENT_ID="$CW_CLIENT_ID" \
+CLIENT_SECRET="$CW_CLIENT_SECRET" \
+REFRESH_TOKEN="$CW_REFRESH_TOKEN" \
+pnpm dlx chrome-webstore-upload-cli@4 upload \
   --source path/to/extension.zip \
-  --extension-id "$CW_EXTENSION_ID" \
-  --client-id "$CW_CLIENT_ID" \
-  --client-secret "$CW_CLIENT_SECRET" \
-  --refresh-token "$CW_REFRESH_TOKEN"
+  --extension-id "$CW_EXTENSION_ID"
 ```
 
 Expected output: `Upload successful` and the new version in your CWS dashboard as a draft.
 
 ## Important: keep it as a draft
 
-The default `upload` command creates a new **draft** version. It does NOT publish. The CLI has no separate `publish` subcommand; to publish live in the same step, add `--auto-publish` to the upload command:
+The `upload` subcommand creates a new **draft** version. It does NOT publish. To go live, v4 uses a separate `publish` subcommand (and running the CLI with **no subcommand** would upload AND publish in one shot — avoid that):
 
 ```bash
-CONFIRM_PUBLISH_LIVE=1 pnpm dlx chrome-webstore-upload-cli@latest upload \
-  --source extension.zip \
-  --extension-id "$CW_EXTENSION_ID" \
-  --client-id "$CW_CLIENT_ID" \
-  --client-secret "$CW_CLIENT_SECRET" \
-  --refresh-token "$CW_REFRESH_TOKEN" \
-  --auto-publish
+CONFIRM_PUBLISH_LIVE=1 \
+CLIENT_ID="$CW_CLIENT_ID" \
+CLIENT_SECRET="$CW_CLIENT_SECRET" \
+REFRESH_TOKEN="$CW_REFRESH_TOKEN" \
+pnpm dlx chrome-webstore-upload-cli@4 publish \
+  --extension-id "$CW_EXTENSION_ID"
 ```
 
-**Default your CI to upload-only (no `--auto-publish`).** Make live publish an explicit, separate workflow that requires manual approval. A bad release going live without review is far worse than a draft sitting in the dashboard.
+**Default your CI to the `upload` (draft) subcommand.** Make live publish an explicit, separate workflow that requires manual approval. A bad release going live without review is far worse than a draft sitting in the dashboard.
 
-The plugin's PreToolUse hook blocks any Bash command containing `--auto-publish` unless prefixed with `CONFIRM_PUBLISH_LIVE=1`, so accidentally typing the flag in a session will not ship a release.
+The plugin's PreToolUse hook blocks the `publish` subcommand and bare `chrome-webstore-upload` invocations (both publish live) unless prefixed with `CONFIRM_PUBLISH_LIVE=1`; the `upload` subcommand is always allowed.
 
 ## Troubleshooting
 

@@ -203,7 +203,7 @@ CRITICAL  content_security_policy.extension_pages  contains 'unsafe-eval'. Forbi
 ── CSP validation: critical=1 ──
 ```
 
-That `critical=1` isn't cosmetic. The PostToolUse hook runs these validators on every manifest write and exits 2 on a critical finding, so a generated manifest with a forbidden CSP fails the write instead of sailing through to a build. There's a PreToolUse hook too, which blocks `chrome-webstore-upload-cli --auto-publish` unless `CONFIRM_PUBLISH_LIVE=1` is set, so the tool does not push a live store release by accident. And a UserPromptSubmit hook nudges when it sees MV2 mentions, since "convert my MV2 extension" is where a lot of the forbidden-API mistakes originate.
+That `critical=1` isn't cosmetic. The PostToolUse hook runs these validators on every manifest write and exits 2 on a critical finding, so a generated manifest with a forbidden CSP fails the write instead of sailing through to a build. There's a PreToolUse hook too, which blocks a live Chrome Web Store publish (`chrome-webstore-upload`'s `publish` subcommand, or a bare invocation that uploads-and-publishes) unless `CONFIRM_PUBLISH_LIVE=1` is set, so the tool does not push a live store release by accident. And a UserPromptSubmit hook nudges when it sees MV2 mentions, since "convert my MV2 extension" is where a lot of the forbidden-API mistakes originate.
 
 ## War story 3: don't force-push a repo something else pins by SHA
 

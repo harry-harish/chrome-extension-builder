@@ -89,12 +89,11 @@ jobs:
         run: |
           ZIP=$(ls -t .output/*.zip | head -1)
           echo "Uploading $ZIP"
-          pnpm dlx chrome-webstore-upload-cli@latest upload \
+          # v4 reads CLIENT_ID/CLIENT_SECRET/REFRESH_TOKEN from the environment.
+          # The `upload` subcommand creates a draft only — it does not publish.
+          pnpm dlx chrome-webstore-upload-cli@4 upload \
             --source "$ZIP" \
-            --extension-id "$EXTENSION_ID" \
-            --client-id "$CLIENT_ID" \
-            --client-secret "$CLIENT_SECRET" \
-            --refresh-token "$REFRESH_TOKEN"
+            --extension-id "$EXTENSION_ID"
 
       - name: Publish live (only on manual dispatch with input)
         if: github.event_name == 'workflow_dispatch' && inputs.publish_live == true
@@ -105,16 +104,11 @@ jobs:
           REFRESH_TOKEN: ${{ secrets.CW_REFRESH_TOKEN }}
           CONFIRM_PUBLISH_LIVE: '1'
         run: |
-          # chrome-webstore-upload-cli has no separate "publish" command — use
-          # --auto-publish on the upload command to push it live.
-          ZIP=$(ls -t .output/*.zip | head -1)
-          pnpm dlx chrome-webstore-upload-cli@latest upload \
-            --source "$ZIP" \
-            --extension-id "$EXTENSION_ID" \
-            --client-id "$CLIENT_ID" \
-            --client-secret "$CLIENT_SECRET" \
-            --refresh-token "$REFRESH_TOKEN" \
-            --auto-publish
+          # v4 has a separate `publish` subcommand that promotes the last
+          # uploaded draft to live. (Running the CLI with no subcommand would
+          # upload AND publish in one shot.)
+          pnpm dlx chrome-webstore-upload-cli@4 publish \
+            --extension-id "$EXTENSION_ID"
 
       - name: Create GitHub release
         if: startsWith(github.ref, 'refs/tags/v')

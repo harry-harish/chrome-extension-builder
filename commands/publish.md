@@ -64,31 +64,23 @@ Confirm the zip exists and report its size. Flag if it exceeds 10 MB (CWS soft l
 
 ### 4. Submit (optional — only if user has credentials configured)
 
-`chrome-webstore-upload-cli` has a single command — `upload` — which creates a new draft version. The optional `--auto-publish` flag tells the store to also publish it live once the upload succeeds. There is no separate `publish` subcommand.
+`chrome-webstore-upload-cli` (v4) takes a subcommand: `upload` creates a new **draft** version, `publish` pushes the last uploaded version **live**, and running it with **no subcommand uploads and publishes live in one shot**. Credentials are read from required environment variables (`CLIENT_ID`, `CLIENT_SECRET`, `REFRESH_TOKEN`); `EXTENSION_ID` can be an env var or the `--extension-id` flag. The old `--client-id`/`--client-secret`/`--refresh-token`/`--auto-publish` flags were removed in v4.
 
-If the user has set `CLIENT_ID`, `CLIENT_SECRET`, `REFRESH_TOKEN`, and `EXTENSION_ID` in the environment, offer to upload as a **draft only**:
+If the user has set `CLIENT_ID`, `CLIENT_SECRET`, `REFRESH_TOKEN`, and `EXTENSION_ID` in the environment, offer to upload as a **draft only** (the `upload` subcommand):
 
 ```bash
-pnpm dlx chrome-webstore-upload-cli@latest upload \
+pnpm dlx chrome-webstore-upload-cli@4 upload \
   --source <zip-path> \
-  --extension-id "$EXTENSION_ID" \
-  --client-id "$CLIENT_ID" \
-  --client-secret "$CLIENT_SECRET" \
-  --refresh-token "$REFRESH_TOKEN"
+  --extension-id "$EXTENSION_ID"
 ```
 
-**Default to draft. Never add `--auto-publish` without explicit user confirmation.** The plugin's PreToolUse hook will block any Bash command containing `--auto-publish` unless prefixed with `CONFIRM_PUBLISH_LIVE=1`.
+**Default to the `upload` (draft) subcommand. Never run `publish` or a bare `chrome-webstore-upload` without explicit user confirmation** — both push live. The plugin's PreToolUse hook blocks the `publish` subcommand and bare invocations unless the command is prefixed with `CONFIRM_PUBLISH_LIVE=1`; the `upload` (draft) subcommand is always allowed.
 
-To go live after the user explicitly confirms, the user runs (themselves, outside the agent):
+To go live after the user explicitly confirms, the user runs (themselves, outside the agent) the separate `publish` step:
 
 ```bash
-CONFIRM_PUBLISH_LIVE=1 pnpm dlx chrome-webstore-upload-cli@latest upload \
-  --source <zip-path> \
-  --extension-id "$EXTENSION_ID" \
-  --client-id "$CLIENT_ID" \
-  --client-secret "$CLIENT_SECRET" \
-  --refresh-token "$REFRESH_TOKEN" \
-  --auto-publish
+CONFIRM_PUBLISH_LIVE=1 pnpm dlx chrome-webstore-upload-cli@4 publish \
+  --extension-id "$EXTENSION_ID"
 ```
 
 If credentials are not configured, link to `skills/extension-publishing/references/oauth-setup.md` for setting them up.

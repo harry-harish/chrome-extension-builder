@@ -9,7 +9,9 @@ Work-list for Phase 2, severity order. Each fix: reproduce → fix → verify �
 
 ## BLOCKER
 
-### B1 — Publish safety hook guards a nonexistent flag; real live-publish bypasses it
+### B1 — Publish safety hook guards a nonexistent flag; real live-publish bypasses it — ✅ RESOLVED
+**Fixed:** hook rewritten (allows only `upload` draft subcommand; blocks `publish`/bare unless `CONFIRM_PUBLISH_LIVE=1`) and verified against 11 real invocations; publish.md/SKILL.md/github-actions.md/oauth-setup.md updated to the v4 CLI + env-var auth, `dlx` pinned to `@4`. L2 resolved by the same anchored pattern.
+
 **Verified directly against `chrome-webstore-upload-cli@4.0.1`.** The tool has **no `--auto-publish` flag**. Its CLI: `chrome-webstore-upload [upload|publish]`; **with no subcommand it does upload + publish (live)**. So:
 - `commands/publish.md` + `extension-publishing/SKILL.md` document `--auto-publish` (and `--client-id`/`--client-secret`/`--refresh-token` flags, now env-vars) → users' publish flow errors out.
 - **`hooks/hooks.json` PreToolUse guards `--auto-publish`** → guards a flag that doesn't exist. The real live-publish paths (`chrome-webstore-upload publish`, bare `chrome-webstore-upload`) are **not blocked**. The guard provides false safety.

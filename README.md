@@ -11,6 +11,8 @@ It scaffolds new extensions, audits existing ones, adds common extension surface
 
 ![Demo GIF](./demo/chrome-extension-builder-demo.gif)
 
+▶ **[Watch the 73-second narrated walkthrough](./demo/video/launch-narrated.mp4)** (with audio) — scaffold → build → validate → web-ext lint → ship.
+
 ## Install
 
 Inside Claude Code:

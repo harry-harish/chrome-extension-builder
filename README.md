@@ -15,7 +15,14 @@ It scaffolds new extensions, audits existing ones, adds common extension surface
 
 ## Install
 
-Inside Claude Code:
+Inside Claude Code, from the Anthropic community marketplace:
+
+```bash
+/plugin marketplace add anthropics/claude-plugins-community
+/plugin install chrome-extension-builder@claude-community
+```
+
+Or install straight from this repo:
 
 ```bash
 /plugin marketplace add harry-harish/chrome-extension-builder

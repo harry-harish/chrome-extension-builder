@@ -43,6 +43,12 @@ DNR rules look like:
 
 Full `urlFilter` syntax: see `developer.chrome.com/docs/extensions/reference/api/declarativeNetRequest#property-RuleCondition-urlFilter`.
 
+> **The bundled validators do not count your rules.** Chrome enforces the
+> limits above (≈30k guaranteed static rules per extension, ~5k dynamic) at load
+> time, and the plugin's manifest/permission validators don't parse referenced
+> `rule_resources` files to check them. If you ship large blocklists, count the
+> rules yourself and split across rulesets before you hit the ceiling.
+
 ## Three rule sources
 
 ### 1. Static rules (compiled at extension build time)

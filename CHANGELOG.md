@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Agent capability matrix in the README.** A table now shows each specialist
+  agent's tool grants, making the minimal-privilege design (no agent can
+  Edit/Write or publish; only the architect plans without shell) verifiable at
+  a glance instead of by reading three agent files.
+- **Note that DNR rule-count limits aren't validated.** `dnr-conversion.md`
+  already documented Chrome's ~30k static / ~5k dynamic limits; it now states
+  explicitly that the bundled validators don't count rules, so authors track it.
 - **Icon dimension validation.** `validate-manifest.py` now reads each PNG
   icon's actual pixel dimensions (stdlib only — no Pillow) and warns when they
   don't match the size key the icon is declared under. Wrong-size icons used to

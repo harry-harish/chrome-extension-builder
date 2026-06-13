@@ -64,6 +64,16 @@ The time sink is everything around it: choosing the right framework, structuring
 - `manifest-auditor` — Reviews `manifest.json`, flags risky permissions, checks CSP, and rejects MV2-only patterns.
 - `extension-test-runner` — Runs build, lint, and smoke-test workflows in isolation.
 
+Tool grants are deliberately minimal — read/analyze agents can't write, and no agent can publish:
+
+| Agent | Read | Grep/Glob | Bash | WebFetch | Edit/Write |
+|-------|:----:|:---------:|:----:|:--------:|:----------:|
+| `extension-architect` | ✓ | ✓ | — | ✓ | — |
+| `manifest-auditor` | ✓ | ✓ | ✓ | — | — |
+| `extension-test-runner` | ✓ | ✓ | ✓ | — | — |
+
+The architect plans but never executes shell or edits files; the auditor and test-runner can run validators/builds but never modify your code.
+
 ## Safety rails
 
 - A `PostToolUse` hook re-checks `manifest.json` changes with manifest, CSP, and permission validators. If a critical issue appears, the session is pushed to fix it before moving on.

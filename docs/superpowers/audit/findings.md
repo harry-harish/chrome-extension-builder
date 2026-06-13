@@ -95,14 +95,14 @@ Primary docs recommend `@latest` without stating the minimum tested version; fal
 
 ## LOW
 
-### L1 — declarativeNetRequest rule-count limit not validated
-No validator counts DNR rules vs Chrome's 30,000/ruleset limit; only fails at runtime. Fix: add a warning, or document.
+### L1 — declarativeNetRequest rule-count limit not validated — ✅ RESOLVED (documented)
+The limits were already in `dnr-conversion.md` (≈30k static / 5k dynamic); added an explicit note that the validators do **not** count rules so authors track it manually. Full rule-file parsing not worth the complexity at LOW severity.
 
 ### L2 — `--auto-publish` grep false-positives (moot after B1)
 The PreToolUse pattern matches the string inside `echo`/comments. B1's rewrite should anchor to actual command position, resolving this too.
 
-### L3 — No centralized agent-capability matrix (doc debt)
-Grants are correct (architect no Bash/Write; auditor & test-runner no Edit/Write) but require reading three files to verify. Fix: add a capability table to README or AGENTS.md.
+### L3 — No centralized agent-capability matrix (doc debt) — ✅ RESOLVED
+Added a tool-grant table to README "Specialist agents" (Read/Grep/Bash/WebFetch/Edit-Write per agent), making the minimal grants verifiable at a glance.
 
 ---
 

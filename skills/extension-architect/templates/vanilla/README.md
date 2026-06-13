@@ -6,7 +6,7 @@ A minimal Manifest V3 Chrome extension with no framework. Use this for:
 - Learning the underlying mechanics.
 - Maximum control with no build pipeline.
 
-For anything non-trivial, use WXT instead (`pnpm dlx wxt@latest init`).
+For anything non-trivial, use WXT instead (`pnpm dlx wxt@~0.20.26 init`).
 
 ## Layout
 

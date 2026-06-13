@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **CI regression guardrails.** Three jobs in `.github/workflows/validate.yml`:
+  an adversarial validator-fixture suite (known-bad manifests must be caught,
+  known-good must pass), a dependency-drift check (fails if a fast-moving
+  package un-pins), and a WXT scaffold→install→build→validate matrix (the exact
+  path the `wxt/sandbox` break failed on). The drift check immediately caught a
+  stray `wxt@latest` in the vanilla template README.
 - **Agent capability matrix in the README.** A table now shows each specialist
   agent's tool grants, making the minimal-privilege design (no agent can
   Edit/Write or publish; only the architect plans without shell) verifiable at

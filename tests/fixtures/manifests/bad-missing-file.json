@@ -1,0 +1,10 @@
+{
+  "manifest_version": 3,
+  "name": "Missing File Fixture",
+  "version": "1.0.0",
+  "description": "References a service worker that does not exist on disk. validate-manifest must flag this critical.",
+  "background": { "service_worker": "does-not-exist.js", "type": "module" },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  }
+}

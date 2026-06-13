@@ -1,0 +1,7 @@
+{
+  "manifest_version": 3,
+  "name": "webRequestBlocking Fixture",
+  "version": "1.0.0",
+  "description": "Requests the MV2-only webRequestBlocking permission. validate-permissions must flag this critical (use declarativeNetRequest).",
+  "permissions": ["webRequestBlocking"]
+}

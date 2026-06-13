@@ -1,0 +1,11 @@
+{
+  "manifest_version": 3,
+  "name": "Clean MV3 Fixture",
+  "version": "1.0.0",
+  "description": "A well-formed MV3 manifest that passes every validator with no critical findings.",
+  "permissions": ["activeTab", "storage"],
+  "host_permissions": ["https://*.example.com/*"],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  }
+}

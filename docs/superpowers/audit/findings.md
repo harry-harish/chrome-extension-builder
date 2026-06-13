@@ -106,6 +106,12 @@ Added a tool-grant table to README "Specialist agents" (Read/Grep/Bash/WebFetch/
 
 ---
 
+## Phase 3 — CI guardrails (regression protection)
+Three jobs added to `.github/workflows/validate.yml`, each backed by a script under `tests/`:
+1. **`validator-fixtures`** (`tests/run-validator-fixtures.sh` + `tests/fixtures/manifests/`) — 6 known-bad manifests (one per violation class) must each be caught (targeted validator → exit 1); 1 known-good manifest must pass all three validators (exit 0). Locks the critical→nonzero-exit contract. *(Building this caught a self-inflicted bug: my first good-clean fixture had a 147-char description > the 132 CWS limit — the validator correctly flagged it.)*
+2. **`dependency-drift`** (`tests/check-dependency-drift.sh`) — fails CI if `wxt@latest`, `chrome-webstore-upload-cli@latest`, `@crxjs/vite-plugin@beta`, or a `^`/`latest`-pinned generated `wxt` reappears in `commands/`/`skills/`/`hooks/`. *(Immediately caught a residual `wxt@latest` in the vanilla template README that M1 missed — now fixed.)*
+3. **`framework-matrix`** (WXT `react` + `vanilla` templates) — scaffold via the bundled `scaffold-wxt.sh` → `pnpm install` → `pnpm build` → run all validators on the built manifest. This is the exact path the `wxt/sandbox` break failed on. **Scoping (no silent caps):** CRXJS/Plasmo are not build-tested — they use upstream `create` tools (Plasmo's is known-broken upstream), so a build job would test upstream code, not the plugin; they're guarded by `dependency-drift` + documented warnings. The vanilla template is covered by the existing `validators` job.
+
 ## Notes
 - Confirmed-clean: WXT scaffold+build (both paths) and the vanilla template + validators (with correct-dimension icons).
 - Refuted: web-ext@latest unpinned (stable 8–10); vite@latest (works at 8.x); Plasmo unversioned (scope); better-npm-audit; React ^18.3.0→19 (semver-impossible); Node/Python min-version runtime failure (works on 3.8, doc-accuracy only).

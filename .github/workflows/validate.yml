@@ -100,3 +100,81 @@ jobs:
           # ShellCheck is preinstalled on ubuntu-latest. Audit every bundled .sh.
           find . -name "*.sh" -not -path "./node_modules/*" -print0 \
             | xargs -0 shellcheck --severity=warning
+
+  validator-fixtures:
+    name: Adversarial validator fixtures
+    runs-on: ubuntu-latest
+    # Asserts the validators catch each known-bad manifest (critical -> exit 1)
+    # and pass the known-good one. Guards the critical->nonzero-exit contract so
+    # an edit can't silently stop catching a violation class (the audit-deps.sh
+    # exit-0-on-critical and validate-csp.sh raw-count bugs are the references).
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Run fixture suite
+        run: bash tests/run-validator-fixtures.sh
+
+  dependency-drift:
+    name: Dependency drift
+    runs-on: ubuntu-latest
+    # Fails if a fast-moving dependency drifts back to a floating spec in
+    # anything the plugin generates or tells users to run. The wxt 0.20.x break
+    # (a floating wxt@latest scaffolding a project that no longer imported
+    # correctly) is the reference failure this keeps from recurring.
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check pins
+        run: bash tests/check-dependency-drift.sh
+
+  framework-matrix:
+    name: WXT scaffold + build (${{ matrix.template }})
+    runs-on: ubuntu-latest
+    # End-to-end regression guard for the plugin's own non-interactive WXT
+    # scaffolder: scaffold -> install -> build -> validate the built manifest.
+    # This is exactly the path the wxt/sandbox break failed on (pnpm install via
+    # the `wxt prepare` postinstall, then `wxt build`). CRXJS/Plasmo are NOT
+    # build-tested here: they use upstream `create` tools (not a plugin-owned
+    # scaffolder), so a build job would test upstream code and Plasmo's scaffold
+    # is known-broken upstream. Those are guarded by the dependency-drift check
+    # and their documented warnings instead; the vanilla template is covered by
+    # the `validators` job above.
+    strategy:
+      fail-fast: false
+      matrix:
+        template: [react, vanilla]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Scaffold, install, build, validate
+        shell: bash
+        run: |
+          set -euo pipefail
+          WORK="$(mktemp -d)"
+          bash skills/wxt-framework/scripts/scaffold-wxt.sh "$WORK/app" "${{ matrix.template }}" pnpm
+          cd "$WORK/app"
+          # The generated project ships no lockfile; a plain install is correct.
+          pnpm install
+          pnpm build
+          MF=.output/chrome-mv3/manifest.json
+          if [ ! -f "$MF" ]; then
+            echo "::error::WXT build produced no manifest at $MF"
+            exit 1
+          fi
+          # The built output must pass every bundled validator (no critical).
+          python3 "$GITHUB_WORKSPACE/skills/extension-architect/scripts/validate-manifest.py" "$MF"
+          bash    "$GITHUB_WORKSPACE/skills/extension-security/scripts/validate-csp.sh"        "$MF"
+          python3 "$GITHUB_WORKSPACE/skills/extension-security/scripts/validate-permissions.py" "$MF"
+          # web-ext lint is informational here (its rule set shifts release to
+          # release); the hard gates above are scaffold/install/build/validators.
+          pnpm dlx web-ext@latest lint --source-dir=.output/chrome-mv3 --self-hosted || \
+            echo "::warning::web-ext lint reported issues (non-fatal)"

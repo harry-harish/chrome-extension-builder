@@ -1,0 +1,7 @@
+{
+  "manifest_version": 3,
+  "name": "MV2 Fields Fixture",
+  "version": "1.0.0",
+  "description": "Carries MV2-only fields (browser_action) under an MV3 version. validate-manifest must flag this critical.",
+  "browser_action": { "default_title": "Old style" }
+}

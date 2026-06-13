@@ -100,4 +100,5 @@ esac
 
 echo ""
 echo "── CSP validation: critical=$critical ──"
-exit "$critical"
+# Exit-code contract: 1 if any critical finding, 0 otherwise (not the raw count).
+exit $((critical > 0 ? 1 : 0))

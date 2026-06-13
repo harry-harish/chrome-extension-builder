@@ -25,8 +25,10 @@ Start from a standard Vite project:
 pnpm create vite@latest <project-name> --template react-ts
 cd <project-name>
 pnpm install
-pnpm add -D @crxjs/vite-plugin@beta
+pnpm add -D @crxjs/vite-plugin@^2.6 @types/chrome
 ```
+
+> Use the stable `@crxjs/vite-plugin@^2.6` line, not `@beta` — `@beta` resolves to an old `2.0.0-beta.x` and is no longer the recommended channel.
 
 Add CRXJS to `vite.config.ts`:
 
@@ -76,6 +78,39 @@ export default defineManifest({
 });
 ```
 
+## Complete the TypeScript + i18n setup
+
+The `react-ts` template does not know about the `chrome.*` API types, and the
+manifest above references `__MSG_*__` keys that need a locale file. Without
+both steps the build fails (`TS2304: Cannot find name 'chrome'`) and the store
+rejects the unresolved message placeholders.
+
+1. Register the Chrome types so `chrome.*` resolves. Add `"chrome"` to the
+   `compilerOptions.types` array in `tsconfig.app.json` (create the field if it
+   isn't there):
+
+   ```jsonc
+   {
+     "compilerOptions": {
+       // ...existing options
+       "types": ["chrome"]
+     }
+   }
+   ```
+
+2. Create `public/_locales/en/messages.json` with every `__MSG_*__` key the
+   manifest uses. `_locales` is the one tree that belongs in `public/` (Vite
+   copies `public/` verbatim into `dist/`, so the locale survives the build —
+   icons and other `src/` assets stay in `src/` so CRXJS can rewrite them):
+
+   ```json
+   {
+     "extension_name": { "message": "My Extension" },
+     "extension_description": { "message": "What this extension does." },
+     "action_title": { "message": "Open My Extension" }
+   }
+   ```
+
 ## Layout
 
 ```
@@ -118,6 +153,6 @@ This is one of the reasons CRXJS is Chromium-first — multi-browser support is 
 ## Things not to do
 
 - ❌ Don't hand-edit `manifest.json` in `dist/` — it's regenerated. Edit `manifest.config.ts`.
-- ❌ Don't put assets like icons in `public/` — CRXJS expects them in `src/` so it can rewrite paths.
+- ❌ Don't put hashed assets like icons in `public/` — CRXJS expects them in `src/` so it can rewrite paths. (`_locales` is the exception: it must live in `public/` so Vite copies it verbatim.)
 - ❌ Don't expect WXT-level multi-browser support. If Firefox/Safari matter, switch to WXT.
 - ❌ Don't pick CRXJS over WXT for a greenfield project unless you specifically need its content-script HMR.

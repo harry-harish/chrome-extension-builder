@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- **`validate-csp.sh` now honors the exit-code contract.** It exited with the
+  raw critical count (e.g. `3`) instead of `1`; now `exit 1` on any critical,
+  `0` otherwise — consistent with the other validators.
+- **CRXJS scaffold was incomplete and failed to build.** The `react-ts`
+  template doesn't include the `chrome.*` types and the skill didn't create the
+  `_locales` file its manifest references, so a clean scaffold hit `TS2304:
+  Cannot find name 'chrome'` and shipped unresolved `__MSG_*__` placeholders.
+  Added `@types/chrome`, a `tsconfig.app.json` `types: ["chrome"]` step, and a
+  `public/_locales/en/messages.json` step. Also moved the recommended plugin
+  off `@crxjs/vite-plugin@beta` (an old `2.0.0-beta.x`) to stable `@^2.6`.
+
 ### Security
 
 - **Publish guard rewritten to block the actual live-publish commands.** The

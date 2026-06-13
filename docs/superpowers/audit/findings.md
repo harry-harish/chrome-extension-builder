@@ -25,15 +25,21 @@ Work-list for Phase 2, severity order. Each fix: reproduce → fix → verify �
 
 ## HIGH
 
-### H1 — `validate-csp.sh` violates the exit-code contract
+### H1 — `validate-csp.sh` violates the exit-code contract — ✅ RESOLVED
+**Fixed:** `exit $((critical > 0 ? 1 : 0))`; verified bad→1, good→0.
+
 `validate-csp.sh:103` does `exit "$critical"` → exits with the raw count (e.g. 3) instead of 1. Breaks the documented "exit 1 if any critical" contract and is inconsistent with the other validators (and the hook's `rc!=0` check still works, but anything keying on exit==1 breaks).
 - **Fix:** `exit $((critical > 0 ? 1 : 0))`.
 
-### H2 — CRXJS scaffold is incomplete → TS build fails
+### H2 — CRXJS scaffold is incomplete → TS build fails — ✅ RESOLVED
+**Fixed:** scaffold now adds `@types/chrome`, a "Complete the TypeScript + i18n setup" section adds `"types": ["chrome"]` to `tsconfig.app.json`.
+
 Following `crxjs-vite/SKILL.md` exactly yields `TS2304: Cannot find name 'chrome'`. Missing: `@types/chrome` devDep, `"chrome"` in `tsconfig.app.json` types, and the `_locales/en/messages.json` setup.
 - **Fix:** Add those three steps to the skill's scaffold section.
 
-### H3 — CRXJS `_locales` not copied to build → validator warning
+### H3 — CRXJS `_locales` not copied to build → validator warning — ✅ RESOLVED
+**Fixed:** setup section now creates `public/_locales/en/messages.json` with the referenced `__MSG_*__` keys; clarified `_locales` is the `public/` exception.
+
 CRXJS doesn't copy `_locales/` to `dist/`; `default_locale` is set but `_locales/` is absent in the build → validator warns.
 - **Fix:** Document putting `_locales/` in `public/` (or drop `default_locale` from the template).
 
@@ -53,7 +59,9 @@ CRXJS doesn't copy `_locales/` to `dist/`; `default_locale` is set but `_locales
 `commands/new.md:118` + `wxt-framework/SKILL.md:21` use `dlx wxt@latest init`; `scaffold-wxt.sh` already pins `~0.20.26`. Also SKILL.md ~line 209 wrongly says scaffold-wxt.sh uses `@latest`. Future WXT minor could break the interactive path (the `wxt/sandbox` removal is the precedent).
 - **Fix:** Pin the documented `dlx` calls to `wxt@~0.20.26`; fix the SKILL.md doc bug; document the minimum tested version.
 
-### M2 — CRXJS skill recommends `@crxjs/vite-plugin@beta` (outdated)
+### M2 — CRXJS skill recommends `@crxjs/vite-plugin@beta` (outdated) — ✅ RESOLVED
+**Fixed:** scaffold now uses `@crxjs/vite-plugin@^2.6` with a note explaining why not `@beta`.
+
 `@beta` resolves to `2.0.0-beta.33`; stable `2.6.1` exists.
 - **Fix:** Recommend `@crxjs/vite-plugin@^2.6` (or `@latest`).
 

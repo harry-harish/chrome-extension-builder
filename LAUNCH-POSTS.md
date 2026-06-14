@@ -1,13 +1,12 @@
 # Launch posts — paste-ready
 
-> Note: `@claude-community` installs cleanly. While the community catalog pin
-> briefly trails the latest release, a WXT scaffold from `/chrome-ext:new` may
-> need one import fixed — Claude resolves it in-session, and it self-resolves
-> once the pin bumps. The repo-direct path (`harry-harish/chrome-extension-builder`)
-> always serves the latest release if you'd rather avoid that entirely.
+> Note: `@claude-community` installs cleanly and now serves **v1.4.0** — the
+> community catalog pin has caught up to the latest release, so the earlier
+> WXT-scaffold caveat no longer applies. The repo-direct path
+> (`harry-harish/chrome-extension-builder`) also always serves the latest release.
 
-Copy blocks verbatim. Demo video:
-https://github.com/harry-harish/chrome-extension-builder/releases/tag/v1.3.1
+Copy blocks verbatim. Latest release:
+https://github.com/harry-harish/chrome-extension-builder/releases/tag/v1.4.0
 
 Install (used in posts):
 
@@ -21,6 +20,10 @@ Repo-direct fallback (works today, always the latest release): `/plugin marketpl
 Suggested order: Show HN (Sat/Sun ~12:00 UTC) → r/ClaudeCode (+4–6h) →
 r/ClaudeAI + r/chrome_extensions (next day, different bodies) → X/Bluesky →
 WXT/Plasmo Discords → dev.to article. Be online ~6h after Show HN to reply.
+
+LinkedIn (#7) and the CapillaryTech Slack post (#8) are independent of that public
+sequence — post them whenever. LinkedIn lands best Tue–Thu morning; the Slack
+heads-up can go any workday. Both are written to stand alone.
 
 ---
 
@@ -142,7 +145,58 @@ Would love feedback on where it falls short for real <FRAMEWORK> projects.
 
 ---
 
-## 7. dev.to article (complete, paste-ready)
+## 7. LinkedIn (public — builder announcement)
+
+Post to your personal LinkedIn. Paste the body below. Put the repo link in the **first comment** (LinkedIn deprioritizes posts with outbound links in the body); the two `/plugin` lines are commands, not URLs, so they stay in the body and double as the CTA. Attach the **validators GIF** as the single media artifact (proves the claim, autoplays silent, low-friction for a skimmed feed). Hold the narrated video and vertical cut for a follow-up.
+
+```
+A model that writes plausible code also writes a plausible manifest. In MV3, plausible and valid are not the same thing.
+
+So I built and open-sourced chrome-extension-builder, a Claude Code plugin for Manifest V3 work. MIT, personal project.
+
+Type /chrome-ext:new and you go from an empty folder to a scaffolded, validated MV3 extension in one guided pass. /chrome-ext:validate then checks the manifest, CSP, and permissions before any of it reaches a reviewer or a browser.
+
+The checks are deterministic, not prompt-tuned. The reviewer and the writer are not the same process: the agent that audits your manifest has no write access and physically cannot rewrite it. A hook also blocks an accidental live Web Store publish.
+
+A pre-launch adversarial audit found 16 real issues. The worst: the publish-safety hook was guarding a flag the Web Store CLI removed in v4, so the actual live-publish commands walked right past it. Fixed, plus 3 CI guardrails.
+
+5 commands: new, validate, add-feature, publish, migrate-mv2. WXT by default, also Plasmo, CRXJS, and vanilla. It does not promise Web Store approval. It just removes the dumb ways to fail.
+
+/plugin marketplace add anthropics/claude-plugins-community
+/plugin install chrome-extension-builder@claude-community
+
+Tell me where the workflow still feels naive.
+```
+
+**First comment** (post within a minute of publishing):
+```
+Repo and v1.4.0 release notes: https://github.com/harry-harish/chrome-extension-builder
+```
+
+Hashtags (optional, append to body): `#chromeextensions #manifestv3 #claudecode`
+
+---
+
+## 8. CapillaryTech internal Slack (personal side project)
+
+Post to a general engineering or show-and-tell channel (e.g. `#engineering`, `#show-and-tell`), not a customer-facing or release channel. Wrap the install line in a Slack code block (triple backticks) so the leading slash is not read as a Slack command and the commands stay copy-pasteable. The GitHub link unfurls inline. Attach the **validators GIF** under the message (or as the first thread reply). Keep the narrated/vertical videos for external channels.
+
+```
+Heads-up: personal weekend project, not Capillary work, sharing in case it is useful. If you ever build a Chrome extension or a browser-based internal tool, it might save you some pain.
+
+It is chrome-extension-builder (v1.4.0), MIT-licensed: a Claude Code plugin that scaffolds a Manifest V3 extension, validates one, adds a popup or content script, preps a Web Store release, and migrates MV2 to MV3.
+
+The agentic-dev angle: it splits work across agents with deliberate limits, so the thing that audits your manifest physically cannot rewrite it. A model that writes plausible code writes a plausible manifest too, but plausible and valid diverge hard in MV3, so validators and hooks catch the MV3-specific mistakes deterministically. Best catch from the pre-launch audit (16 verified issues): the hook meant to block an accidental live publish was guarding --auto-publish, a flag the Web Store CLI dropped in v4, so the real publish commands sailed right past it. Fixed, plus three CI guardrails.
+
+Repo: https://github.com/harry-harish/chrome-extension-builder
+Install: /plugin marketplace add anthropics/claude-plugins-community then /plugin install chrome-extension-builder@claude-community
+
+Feedback welcome, especially where it still feels naive. Happy to demo the multi-agent setup if anyone is curious, just ping me.
+```
+
+---
+
+## 9. dev.to article (complete, paste-ready)
 
 In the dev.to editor, set **Title** and **Tags** in their fields, then paste the body below.
 

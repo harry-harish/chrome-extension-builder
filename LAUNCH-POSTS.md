@@ -150,22 +150,22 @@ Would love feedback on where it falls short for real <FRAMEWORK> projects.
 Post to your personal LinkedIn. Paste the body below. Put the repo link in the **first comment** (LinkedIn deprioritizes posts with outbound links in the body); the two `/plugin` lines are commands, not URLs, so they stay in the body and double as the CTA. Attach the **validators GIF** as the single media artifact (proves the claim, autoplays silent, low-friction for a skimmed feed). Hold the narrated video and vertical cut for a follow-up.
 
 ```
-A model that writes plausible code also writes a plausible manifest. In MV3, plausible and valid are not the same thing.
+A model that writes plausible code will also write a plausible manifest. And in MV3, plausible and valid aren't the same thing. That gap is where extensions quietly break.
 
-So I built and open-sourced chrome-extension-builder, a Claude Code plugin for Manifest V3 work. MIT, personal project.
+So I built chrome-extension-builder and open-sourced it (MIT). It's a Claude Code plugin for Manifest V3 work.
 
-Type /chrome-ext:new and you go from an empty folder to a scaffolded, validated MV3 extension in one guided pass. /chrome-ext:validate then checks the manifest, CSP, and permissions before any of it reaches a reviewer or a browser.
+Run /chrome-ext:new and you go from an empty folder to a scaffolded, validated extension in one pass. /chrome-ext:validate checks the manifest, CSP, and permissions before any of it reaches a reviewer or a browser. The checks are deterministic, not prompt-tuning.
 
-The checks are deterministic, not prompt-tuned. The reviewer and the writer are not the same process: the agent that audits your manifest has no write access and physically cannot rewrite it. A hook also blocks an accidental live Web Store publish.
+One design choice I care about: the agent that audits your manifest has no write access, so it physically can't rewrite what it just flagged. The reviewer and the writer aren't the same process.
 
-A pre-launch adversarial audit found 16 real issues. The worst: the publish-safety hook was guarding a flag the Web Store CLI removed in v4, so the actual live-publish commands walked right past it. Fixed, plus 3 CI guardrails.
+Before launch I ran an adversarial audit on my own plugin. It found 16 real issues. My favorite: the hook that was meant to block an accidental live publish had been guarding a flag the Web Store CLI removed back in its v4, so the real publish command walked straight past it. A safety check guarding nothing. Fixed now, with CI to keep it that way.
 
-5 commands: new, validate, add-feature, publish, migrate-mv2. WXT by default, also Plasmo, CRXJS, and vanilla. It does not promise Web Store approval. It just removes the dumb ways to fail.
+Five commands (new, validate, add-feature, publish, migrate-mv2). WXT by default, but Plasmo, CRXJS, and vanilla all work. It won't get you through Web Store review. It just kills the dumb ways to fail first.
 
 /plugin marketplace add anthropics/claude-plugins-community
 /plugin install chrome-extension-builder@claude-community
 
-Tell me where the workflow still feels naive.
+Tell me where it still feels naive.
 ```
 
 **First comment** (post within a minute of publishing):
@@ -182,16 +182,18 @@ Hashtags (optional, append to body): `#chromeextensions #manifestv3 #claudecode`
 Post to a general engineering or show-and-tell channel (e.g. `#engineering`, `#show-and-tell`), not a customer-facing or release channel. Wrap the install line in a Slack code block (triple backticks) so the leading slash is not read as a Slack command and the commands stay copy-pasteable. The GitHub link unfurls inline. Attach the **validators GIF** under the message (or as the first thread reply). Keep the narrated/vertical videos for external channels.
 
 ```
-Heads-up: personal weekend project, not Capillary work, sharing in case it is useful. If you ever build a Chrome extension or a browser-based internal tool, it might save you some pain.
+Heads-up, this is a personal weekend project, not Capillary work. Sharing in case it's useful: if you ever build a Chrome extension or some browser-based internal tool, it might save you some pain.
 
-It is chrome-extension-builder (v1.4.0), MIT-licensed: a Claude Code plugin that scaffolds a Manifest V3 extension, validates one, adds a popup or content script, preps a Web Store release, and migrates MV2 to MV3.
+It's chrome-extension-builder (v1.4.0, MIT). A Claude Code plugin that scaffolds a Manifest V3 extension, validates an existing one, adds a popup or content script, preps a Web Store release, and migrates an old MV2 extension forward.
 
-The agentic-dev angle: it splits work across agents with deliberate limits, so the thing that audits your manifest physically cannot rewrite it. A model that writes plausible code writes a plausible manifest too, but plausible and valid diverge hard in MV3, so validators and hooks catch the MV3-specific mistakes deterministically. Best catch from the pre-launch audit (16 verified issues): the hook meant to block an accidental live publish was guarding --auto-publish, a flag the Web Store CLI dropped in v4, so the real publish commands sailed right past it. Fixed, plus three CI guardrails.
+The part I think is interesting for us: it splits the work across agents with deliberate limits. The agent that audits your manifest literally can't write files, so it can't rewrite the thing it just flagged. Validators and hooks catch the MV3-specific mistakes deterministically, because a model that writes plausible code writes a plausible manifest too, and in MV3 those two aren't the same thing.
+
+Funniest bug the pre-launch audit caught (16 in total): the hook meant to block an accidental live publish was guarding --auto-publish, a flag the Web Store CLI had already dropped in v4. So the real publish command sailed right past the guard. Fixed it, added CI so it stays fixed.
 
 Repo: https://github.com/harry-harish/chrome-extension-builder
 Install: /plugin marketplace add anthropics/claude-plugins-community then /plugin install chrome-extension-builder@claude-community
 
-Feedback welcome, especially where it still feels naive. Happy to demo the multi-agent setup if anyone is curious, just ping me.
+Feedback welcome, especially where it still feels naive. Happy to demo the multi-agent setup if anyone wants, just ping me.
 ```
 
 ---

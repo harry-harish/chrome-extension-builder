@@ -162,6 +162,8 @@ Before launch I ran an adversarial audit on my own plugin. It found 16 real issu
 
 Five commands (new, validate, add-feature, publish, migrate-mv2). WXT by default, but Plasmo, CRXJS, and vanilla all work. It won't get you through Web Store review. It just kills the dumb ways to fail first.
 
+It's listed in Anthropic's community plugin marketplace, so the two commands below install it from there, not from a random repo. The same instinct runs through the plugin itself: minimal agent permissions, deterministic checks, and a guard against shipping something you didn't mean to.
+
 /plugin marketplace add anthropics/claude-plugins-community
 /plugin install chrome-extension-builder@claude-community
 
@@ -189,6 +191,8 @@ It's chrome-extension-builder (v1.4.0, MIT). A Claude Code plugin that scaffolds
 The part I think is interesting for us: it splits the work across agents with deliberate limits. The agent that audits your manifest literally can't write files, so it can't rewrite the thing it just flagged. Validators and hooks catch the MV3-specific mistakes deterministically, because a model that writes plausible code writes a plausible manifest too, and in MV3 those two aren't the same thing.
 
 Funniest bug the pre-launch audit caught (16 in total): the hook meant to block an accidental live publish was guarding --auto-publish, a flag the Web Store CLI had already dropped in v4. So the real publish command sailed right past the guard. Fixed it, added CI so it stays fixed.
+
+It's also listed in Anthropic's community plugin marketplace, so it's a clean install from there rather than some repo you have to trust.
 
 Repo: https://github.com/harry-harish/chrome-extension-builder
 Install: /plugin marketplace add anthropics/claude-plugins-community then /plugin install chrome-extension-builder@claude-community

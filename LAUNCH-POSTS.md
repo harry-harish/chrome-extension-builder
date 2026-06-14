@@ -145,7 +145,7 @@ Would love feedback on where it falls short for real <FRAMEWORK> projects.
 
 ---
 
-## 7. LinkedIn (public — builder announcement)
+## 7. LinkedIn (public, builder announcement)
 
 Post to your personal LinkedIn. Paste the body below. Put the repo link in the **first comment** (LinkedIn deprioritizes posts with outbound links in the body); the two `/plugin` lines are commands, not URLs, so they stay in the body and double as the CTA. Attach the **validators GIF** as the single media artifact (proves the claim, autoplays silent, low-friction for a skimmed feed). Hold the narrated video and vertical cut for a follow-up.
 

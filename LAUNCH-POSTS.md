@@ -188,7 +188,7 @@ For a general channel with a mixed, non-engineering, global audience. The main m
 ```
 I built and open-sourced a developer tool, and it's now live on Anthropic's official Claude Code plugin marketplace. Getting listed there means it passed Anthropic's review, including an automated safety check.
 
-In plain terms: it helps developers build Chrome browser extensions using Claude Code, and it automatically checks their work for the common mistakes that get an extension rejected by the Chrome Web Store. Less trial and error, fewer surprises at submission.
+In plain terms: it helps developers build Chrome browser extensions with Claude Code, and it checks their work as they go. It catches the common mistakes that get an extension rejected by the Chrome Web Store, and it flags safety problems too, like asking for more access to people's data than necessary, or using code patterns a browser treats as unsafe. Fewer surprises at submission, and safer extensions for the people who install them.
 
 It's called chrome-extension-builder. Free and open source.
 
@@ -205,6 +205,8 @@ Happy to give a quick demo to anyone curious. Feedback welcome.
 
 ```
 A bit more on how it's built, for anyone interested. It splits the work across separate agents with deliberate limits, so the agent that reviews your manifest can't edit files. It can only flag problems, never silently rewrite them. The checks run deterministically through hooks, not by asking the model nicely.
+
+On security specifically, it checks the things that actually affect the people who install an extension. It blocks insecure content-security-policy settings (no remote code, no eval), flags over-broad permissions and pushes toward the narrowest access that works (activeTab instead of access to every site, for instance), and rejects old Manifest V2 patterns. The plugin itself collects no data, makes no network calls of its own, and ships no analytics.
 
 Before release I ran a multi-agent audit against the plugin and it found 16 real issues. My favorite: a safety check that was supposed to prevent an accidental live publish had been watching for an old command flag the Chrome Web Store tool already removed, so the real publish command slipped right past it. Fixed, with CI added so it can't come back.
 ```

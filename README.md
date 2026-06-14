@@ -10,10 +10,6 @@ A Claude Code plugin for building and shipping Manifest V3 Chrome extensions wit
 
 It scaffolds new extensions, audits existing ones, adds common extension surfaces, runs validation, and prepares release artifacts. It works with WXT, Plasmo, CRXJS, and vanilla setups, with WXT as the default path.
 
-![Demo GIF](./demo/chrome-extension-builder-demo.gif)
-
-▶ **[Watch the 73-second narrated walkthrough](./demo/video/launch-narrated.mp4)** (with audio) — scaffold → build → validate → web-ext lint → ship.
-
 ## Install
 
 Inside Claude Code, from the Anthropic community marketplace:

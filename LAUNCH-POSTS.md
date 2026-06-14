@@ -179,23 +179,34 @@ Hashtags (optional, append to body): `#chromeextensions #manifestv3 #claudecode`
 
 ---
 
-## 8. CapillaryTech internal Slack
+## 8. CapillaryTech internal Slack (mixed, global channel)
 
-Post to a general engineering or show-and-tell channel (e.g. `#engineering`, `#show-and-tell`). Wrap the install line in a Slack code block (triple backticks) so the leading slash is not read as a Slack command and the commands stay copy-pasteable. The GitHub link unfurls inline. Attach the **validators GIF** under the message (or as the first thread reply). Keep the narrated/vertical videos for external channels.
+For a general channel with a mixed, non-engineering, global audience. The main message stays plain and short and leads with the Anthropic-marketplace credibility (the part everyone understands). Post the technical depth as a **thread reply** so it doesn't clutter the main message for non-developers. Keep the language simple for non-native English readers: short sentences, no jargon in the main post. Wrap the install lines in a Slack code block (triple backticks) so the leading slash is not read as a Slack command. Attach the **validators GIF** to the thread reply, not the main message.
+
+**Main message:**
 
 ```
-I shipped a Claude Code plugin, and it's now live on Anthropic's community plugin marketplace, which means it passed their submission review (plugin validation plus automated safety screening). Sharing here in case it's useful for anyone working on browser extensions, or just curious what a Claude Code plugin can do.
+I built and open-sourced a developer tool, and it's now live on Anthropic's official Claude Code plugin marketplace. Getting listed there means it passed Anthropic's review, including an automated safety check.
 
-It's chrome-extension-builder (v1.4.0, MIT). It scaffolds a Manifest V3 Chrome extension, validates an existing one, adds a popup or content script, preps a Web Store release, and migrates an old MV2 extension forward.
+In plain terms: it helps developers build Chrome browser extensions using Claude Code, and it automatically checks their work for the common mistakes that get an extension rejected by the Chrome Web Store. Less trial and error, fewer surprises at submission.
 
-The part I think is interesting for us is the agentic design: it splits the work across agents with deliberate limits, so the agent that audits your manifest literally can't write files. It can't rewrite the thing it just flagged. Validators and hooks then catch the MV3-specific mistakes deterministically, because a model that writes plausible code writes a plausible manifest too, and in MV3 those aren't the same thing.
+It's called chrome-extension-builder. Free and open source.
 
-Funniest bug the pre-launch audit caught (16 in total): the hook meant to block an accidental live publish was guarding --auto-publish, a flag the Web Store CLI had already dropped in v4. So the real publish command sailed right past the guard. Fixed it, added CI so it stays fixed.
+If you build extensions, or just want to try it, install is two lines in Claude Code:
+/plugin marketplace add anthropics/claude-plugins-community
+/plugin install chrome-extension-builder@claude-community
 
-Repo: https://github.com/harry-harish/chrome-extension-builder
-Install: /plugin marketplace add anthropics/claude-plugins-community then /plugin install chrome-extension-builder@claude-community
+Repo and details: https://github.com/harry-harish/chrome-extension-builder
 
-Feedback welcome, especially where it still feels naive. Happy to demo the multi-agent setup if anyone wants, just ping me.
+Happy to give a quick demo to anyone curious. Feedback welcome.
+```
+
+**Thread reply (for the engineers):**
+
+```
+A bit more on how it's built, for anyone interested. It splits the work across separate agents with deliberate limits, so the agent that reviews your manifest can't edit files. It can only flag problems, never silently rewrite them. The checks run deterministically through hooks, not by asking the model nicely.
+
+Before release I ran a multi-agent audit against the plugin and it found 16 real issues. My favorite: a safety check that was supposed to prevent an accidental live publish had been watching for an old command flag the Chrome Web Store tool already removed, so the real publish command slipped right past it. Fixed, with CI added so it can't come back.
 ```
 
 ---

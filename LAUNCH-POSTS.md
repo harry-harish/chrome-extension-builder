@@ -216,7 +216,7 @@ Claude Code writes extension code fine. That was never the problem.
 
 Ask it for a content script that highlights matched text, or a background service worker that debounces a fetch, and it produces something reasonable on the first try. Where it trips is everything around the code: the Manifest V3 rules, the permission model, the content security policy, and the unwritten expectations of Chrome Web Store review. Those are the parts that fail late, at install, at build, or three weeks after you thought you shipped. And they fail quietly.
 
-I spent a while turning that gap into a plugin called Chrome Extension Builder. This is less a pitch for the plugin and more a writeup of the three things that broke while I built it, because each one taught me something I'd want to know if I were building any developer tool, plugin or not.
+I spent a while turning that gap into a plugin called Chrome Extension Builder. This is less a pitch for the plugin and more a writeup of the four things that broke while I built it, because each one taught me something I'd want to know if I were building any developer tool, plugin or not.
 
 ## The actual problem
 
@@ -275,13 +275,23 @@ The lesson is specific and I'll state it plainly: if an external system pins you
 
 More generally: the failure modes that hurt most are the ones with no error message. A red build you fix in an hour. A silently-skipped auto-bump you find when someone mentions in passing that the install "doesn't work for them." Build the alarm for the silent failures first.
 
+## War story 4: I audited my own plugin and found a safety check guarding nothing
+
+Before the 1.4 release I did something I'd recommend to anyone shipping a tool other people run: I turned a fleet of agents loose on it adversarially, one per risk area, each finding double-checked by a separate skeptic agent whose only job was to disprove it. It came back with 16 real issues. Most were ordinary. One was not.
+
+The plugin has a hook that is supposed to stop you from publishing a live Chrome Web Store release by accident. It worked by blocking any command containing `--auto-publish`. Reasonable, except the Web Store upload CLI had dropped `--auto-publish` back in its v4. The live-publish path was now a bare invocation, or a separate `publish` subcommand, and the guard checked for neither. So the safety check was guarding a flag that no longer existed. It would have waved the real publish command straight through while looking, in the code and in my head, exactly like protection.
+
+That is worse than having no guard, because a guard you trust changes how carefully you behave. The fix was easy once I saw it: match the actual live-publish invocations and require an explicit `CONFIRM_PUBLISH_LIVE=1` to get past them. That is the guard described back in war story two. The harder fix was structural. I turned the audit's findings into CI: an adversarial fixture suite that asserts each validator still catches the bad manifests it claims to, a drift check that fails if a pinned dependency floats again, and a job that scaffolds and builds a real project end to end.
+
+The lesson is the uncomfortable one. A safety mechanism is a claim about the world ("this command is dangerous"), and the world moves. The flag gets renamed, the API splits one method into two, the dependency ships a major. If you never re-verify the claim against the real downstream thing, the mechanism quietly decays into decoration. The way you find that out is to attack your own tool on purpose, before someone else does it by accident.
+
 ## The honest non-goals
 
 I want to be precise about what this does not do, because the failures above made me allergic to overpromising.
 
 It does not guarantee Chrome Web Store approval. Review is done by humans against policy, and no validator predicts a reviewer. It does not replace the WXT, Plasmo, or CRXJS docs; it leans on them and points you at them, it is not a substitute for reading them. It does not make unsafe permissions acceptable; it makes them visible and harder to ship by accident, which is not the same thing. And it does not publish a live store release by accident; that's the whole point of the confirmation gate.
 
-What I actually learned, across all three stories, is that the hard part of a code-generation tool isn't the generation. It's the verification, the pinning, and the boring discipline around the seams where your tool meets someone else's system. The model writes the content script. The work is making sure the manifest around it survives install, build, store review, and the next upstream release.
+What I actually learned, across all four stories, is that the hard part of a code-generation tool isn't the generation. It's the verification, the pinning, and the boring discipline around the seams where your tool meets someone else's system. The model writes the content script. The work is making sure the manifest around it survives install, build, store review, and the next upstream release.
 
 ## If you want to try it or break it
 

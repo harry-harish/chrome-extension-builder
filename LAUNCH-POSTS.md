@@ -179,20 +179,18 @@ Hashtags (optional, append to body): `#chromeextensions #manifestv3 #claudecode`
 
 ---
 
-## 8. CapillaryTech internal Slack (personal side project)
+## 8. CapillaryTech internal Slack
 
-Post to a general engineering or show-and-tell channel (e.g. `#engineering`, `#show-and-tell`), not a customer-facing or release channel. Wrap the install line in a Slack code block (triple backticks) so the leading slash is not read as a Slack command and the commands stay copy-pasteable. The GitHub link unfurls inline. Attach the **validators GIF** under the message (or as the first thread reply). Keep the narrated/vertical videos for external channels.
+Post to a general engineering or show-and-tell channel (e.g. `#engineering`, `#show-and-tell`). Wrap the install line in a Slack code block (triple backticks) so the leading slash is not read as a Slack command and the commands stay copy-pasteable. The GitHub link unfurls inline. Attach the **validators GIF** under the message (or as the first thread reply). Keep the narrated/vertical videos for external channels.
 
 ```
-Heads-up, this is a personal weekend project, not Capillary work. Sharing in case it's useful: if you ever build a Chrome extension or some browser-based internal tool, it might save you some pain.
+I shipped a Claude Code plugin, and it's now live on Anthropic's community plugin marketplace, which means it passed their submission review (plugin validation plus automated safety screening). Sharing here in case it's useful for anyone working on browser extensions, or just curious what a Claude Code plugin can do.
 
-It's chrome-extension-builder (v1.4.0, MIT). A Claude Code plugin that scaffolds a Manifest V3 extension, validates an existing one, adds a popup or content script, preps a Web Store release, and migrates an old MV2 extension forward.
+It's chrome-extension-builder (v1.4.0, MIT). It scaffolds a Manifest V3 Chrome extension, validates an existing one, adds a popup or content script, preps a Web Store release, and migrates an old MV2 extension forward.
 
-The part I think is interesting for us: it splits the work across agents with deliberate limits. The agent that audits your manifest literally can't write files, so it can't rewrite the thing it just flagged. Validators and hooks catch the MV3-specific mistakes deterministically, because a model that writes plausible code writes a plausible manifest too, and in MV3 those two aren't the same thing.
+The part I think is interesting for us is the agentic design: it splits the work across agents with deliberate limits, so the agent that audits your manifest literally can't write files. It can't rewrite the thing it just flagged. Validators and hooks then catch the MV3-specific mistakes deterministically, because a model that writes plausible code writes a plausible manifest too, and in MV3 those aren't the same thing.
 
 Funniest bug the pre-launch audit caught (16 in total): the hook meant to block an accidental live publish was guarding --auto-publish, a flag the Web Store CLI had already dropped in v4. So the real publish command sailed right past the guard. Fixed it, added CI so it stays fixed.
-
-It's also listed in Anthropic's community plugin marketplace, which means it went through their submission review (validation plus automated safety screening) before it showed up there.
 
 Repo: https://github.com/harry-harish/chrome-extension-builder
 Install: /plugin marketplace add anthropics/claude-plugins-community then /plugin install chrome-extension-builder@claude-community

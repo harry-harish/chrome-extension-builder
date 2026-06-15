@@ -139,7 +139,7 @@ guardrails so each fixed class is regression-protected.
 ### Changed
 
 - **Removed the `version` field from the plugin entry in
-  `marketplace.json`.** Per [affaan-m/everything-claude-code#37][1] and
+  `marketplace.json`.** Per [affaan-m/ECC#37][1] and
   the empirical pattern in the official catalog (190 of 204 plugins in
   `anthropics/claude-plugins-official` omit this field), a `version`
   field on the plugin entry blocks Claude Code's auto-update detection
@@ -154,7 +154,7 @@ guardrails so each fixed class is regression-protected.
   still needs an Anthropic-side intervention — but it removes one
   known blocker on our side.
 
-  [1]: https://github.com/affaan-m/everything-claude-code/issues/37
+  [1]: https://github.com/affaan-m/ECC/pull/37
 
 ## [1.2.2] - 2026-05-22
 

@@ -4,6 +4,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
 [![Claude Code plugin](https://img.shields.io/badge/Claude%20Code-plugin-d97757)](#install)
 [![GitHub release](https://img.shields.io/github/v/release/harry-harish/chrome-extension-builder)](https://github.com/harry-harish/chrome-extension-builder/releases)
+[![Available on @claude-community](https://img.shields.io/badge/Claude%20community%20marketplace-chrome--extension--builder-d97757)](https://github.com/anthropics/claude-plugins-community)
 
 A Claude Code plugin for building and shipping Manifest V3 Chrome extensions without tripping over the usual stuff: manifest quirks, permission sprawl, CSP mistakes, broken builds, and Web Store submission prep.
 
@@ -76,7 +77,7 @@ The architect plans but never executes shell or edits files; the auditor and tes
 
 ## Safety rails
 
-- A `PostToolUse` hook re-checks `manifest.json` changes with manifest, CSP, and permission validators. If a critical issue appears, the session is pushed to fix it before moving on.
+- A `PostToolUse` hook runs the manifest, CSP, and permission validators after any `manifest.json` write. The edit is applied first; if a critical issue is found, the hook flags it (exit 2) so the session fixes it before continuing.
 - A `PreToolUse` hook blocks live publish commands unless they are explicitly confirmed.
 - The plugin defaults to Manifest V3 only.
 
@@ -148,15 +149,18 @@ This plugin is useful if you are:
 ## Repository structure
 
 ```text
-.claude-plugin/
-agents/
-commands/
-hooks/
-skills/
+.claude-plugin/   # plugin.json + marketplace.json
+agents/           # extension-architect, manifest-auditor, extension-test-runner
+commands/         # the 5 /chrome-ext:* slash commands
+hooks/            # PostToolUse / PreToolUse / UserPromptSubmit
+skills/           # framework + domain skills (WXT, Plasmo, CRXJS, security, i18n, ...)
+tests/            # validator fixtures + drift / guardrail checks
 README.md
 CHANGELOG.md
 LICENSE
+SECURITY.md
 PRIVACY.md
+CONTRIBUTING.md
 ```
 
 ## Validate before release

@@ -109,7 +109,7 @@ Example for a PR highlighter:
 ## Marquee promotional tile (featured-only)
 
 - **Dimensions**: 1400×560.
-- **Used**: only on the CWS homepage if your extension gets featured (rare, Anthropic's choice).
+- **Used**: only on the CWS homepage if your extension gets featured (rare, the Chrome Web Store's editorial choice).
 - **Optional**.
 
 If you ever provide it, use the same hero shot as Screenshot 1 but at 1400×560.

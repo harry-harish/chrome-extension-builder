@@ -186,7 +186,7 @@ For a general channel with a mixed, non-engineering, global audience. The main m
 **Main message:**
 
 ```
-I built and open-sourced a developer tool, and it's now live on Anthropic's official Claude Code plugin marketplace. Getting listed there means it passed Anthropic's review, including an automated safety check.
+I built and open-sourced a developer tool, and it's now listed on Anthropic's community Claude Code plugin marketplace. Getting listed there means it passed submission review, including an automated safety screening.
 
 In plain terms: it helps developers build Chrome browser extensions with Claude Code, and it checks their work as they go. It catches the common mistakes that get an extension rejected by the Chrome Web Store, and it flags safety problems too, like asking for more access to people's data than necessary, or using code patterns a browser treats as unsafe. Fewer surprises at submission, and safer extensions for the people who install them.
 

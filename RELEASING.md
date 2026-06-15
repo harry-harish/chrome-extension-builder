@@ -11,9 +11,12 @@ that produced v1.0.0 → v1.2.2.
    gh run list --limit 1 --json status,conclusion,headSha
    ```
 
-   All three jobs (`plugin-validate`, `plugin-install`, `shell-syntax`)
-   must report `success`. The `plugin-install` job is the only one that
-   catches schema-mismatch bugs the way the runtime does. If it's red,
+   All jobs (`plugin-validate`, `validators`, `plugin-install`,
+   `shell-syntax`, `validator-fixtures`, `dependency-drift`, and the
+   `framework-matrix` legs) must report `success`. The `plugin-install`
+   job is the one that catches schema-mismatch bugs the way the runtime
+   does, and `validator-fixtures`/`dependency-drift`/`framework-matrix`
+   guard the regression classes fixed in v1.4.0. If any is red,
    **do not tag**.
 
 2. **Fresh install in a clean Claude Code session.** Belt-and-suspenders
